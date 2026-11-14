@@ -82,62 +82,74 @@ flowchart TD
 
 ## 4. Organisation du Répertoire & Arborescence
 
-Le projet est structuré pour séparer rigoureusement les données, les environnements d'expérimentation de chaque membre, les checkpoints de modèles et les livrables d'évaluation :
+Le projet est structuré par domaines fonctionnels pour séparer rigoureusement les articles théoriques, la gestion de projet, les feuilles de route, le protocole d'évaluation, le code source de chaque membre et les résultats :
 
 ```text
 PROJET/
-├── README.md                                   # Documentation principale et synthèse du projet
+├── README.md                                           # Documentation principale et synthèse du projet
 │
-├── docs/                                       # Fiches théoriques et méthodologiques
-│   ├── article_1_nerf_mildenhall_et_al_2020.md
-│   ├── article_2_pixelnerf_yu_et_al_2021.md
-│   ├── article_3_lrm_hong_et_al_2023.md
-│   ├── feuille_de_route_membre_1_nerf_pixelnerf.md
-│   ├── feuille_de_route_membre_2_lrm.md
-│   ├── prompt_ma_tre_du_projet_2d_vers_3d.md
-│   └── protocole_d_valuation_et_benchmark_comparatif.md
+├── articles/                                           # Fiches d'analyse et articles scientifiques
+│   ├── article_1_nerf_mildenhall_et_al_2020.md         # Fiche de synthèse NeRF
+│   ├── article_2_pixelnerf_yu_et_al_2021.md            # Fiche de synthèse pixelNeRF
+│   ├── article_3_lrm_hong_et_al_2023.md                # Fiche de synthèse LRM
+│   ├── Article_NeRF.pdf                                # Papier de recherche NeRF
+│   ├── Article_LRM.pdf                                 # Papier de recherche LRM
+│   ├── prompt_ma_tre_du_projet_2d_vers_3d.md           # Prompt maître & cadrage théorique des articles
+│   └── urls_des_articles.md                            # Liens ArXiv, GitHub & démos
 │
-├── data/                                       # Datasets et jeux de données
-│   ├── raw/                                    # Données brutes (vidéos .mp4, photos non traitées)
-│   ├── processed/                              # Données calibrées (après COLMAP / rembg)
-│   │   ├── colmap_scenes/                      # Sorties transforms.json pour Nerfstudio
-│   │   └── masked_single_images/               # Images détourées au format RGB-Alpha pour LRM
-│   └── benchmark_samples/                      # 3 à 5 scènes/objets communs de référence pour le test
+├── feuilles_de_route/                                  # Feuilles de route opérationnelles individuelles
+│   ├── feuille_de_route_membre_1_nerf_pixelnerf.md     # Feuille de route Membre 1 (Toi)
+│   └── feuille_de_route_membre_2_lrm.md                # Feuille de route Membre 2 (Binôme)
 │
-├── models/                                     # Poids et checkpoints pré-entraînés
-│   ├── nerf_checkpoints/                       # Modèles sauvegardés Nerfstudio
-│   ├── pixelnerf_checkpoints/                  # Checkpoints officiels ShapeNet (Chairs/Cars)
-│   └── lrm_checkpoints/                        # Poids OpenLRM / TripoSR téléchargés
+├── gestion_projet/                                     # Pilotage, suivi de cycle de vie et évaluation
+│   ├── cycle_de_vie_et_suivi_projet.md                 # Dashboard vivant & checklist d'avancement
+│   └── evaluation/                                     # Protocole de test et métriques
+│       └── protocole_d_valuation_et_benchmark_comparatif.md # Protocole PSNR/SSIM/LPIPS & plan rapport
 │
-├── src/                                        # Code source exécutable
-│   ├── common/                                 # Utilitaires partagés
-│   │   ├── metrics.py                          # Scripts de calcul automatique PSNR / SSIM / LPIPS
-│   │   ├── io_transforms.py                    # Conversion de poses de caméras et de formats
-│   │   └── visualizer.py                       # Export de grilles comparatives et vidéos
+├── data/                                               # Datasets et jeux de données (à créer à la Phase 0)
+│   ├── raw/                                            # Données brutes (vidéos .mp4, photos non traitées)
+│   ├── processed/                                      # Données calibrées (après COLMAP / rembg)
+│   │   ├── colmap_scenes/                              # Sorties transforms.json pour Nerfstudio
+│   │   └── masked_single_images/                       # Images détourées au format RGB-Alpha pour LRM
+│   └── benchmark_samples/                              # 3 à 5 scènes/objets communs de référence pour le test
+│
+├── models/                                             # Poids et checkpoints pré-entraînés
+│   ├── nerf_checkpoints/                               # Modèles sauvegardés Nerfstudio
+│   ├── pixelnerf_checkpoints/                          # Checkpoints officiels ShapeNet (Chairs/Cars)
+│   └── lrm_checkpoints/                                # Poids OpenLRM / TripoSR téléchargés
+│
+├── src/                                                # Code source exécutable
+│   ├── common/                                         # Utilitaires partagés
+│   │   ├── metrics.py                                  # Scripts de calcul automatique PSNR / SSIM / LPIPS
+│   │   ├── io_transforms.py                            # Conversion de poses de caméras et de formats
+│   │   └── visualizer.py                               # Export de grilles comparatives et vidéos
 │   │
-│   ├── member1_nerf_pixelnerf/                 # Espace de travail : Membre 1
+│   ├── member1_nerf_pixelnerf/                         # Espace de travail : Membre 1
 │   │   ├── scripts/
-│   │   │   ├── run_colmap.bat / .sh            # Automatisation extraction des poses
-│   │   │   ├── train_nerf.py                   # Script de lancement Nerfstudio (Nerfacto)
-│   │   │   └── infer_pixelnerf.py              # Inférence monoculaire pixelNeRF
-│   │   └── configs/                            # Fichiers de configuration et hyperparamètres
+│   │   │   ├── run_colmap.bat / .sh                    # Automatisation extraction des poses
+│   │   │   ├── train_nerf.py                           # Script de lancement Nerfstudio (Nerfacto)
+│   │   │   └── infer_pixelnerf.py                      # Inférence monoculaire pixelNeRF
+│   │   └── configs/                                    # Fichiers de configuration et hyperparamètres
 │   │
-│   └── member2_lrm/                            # Espace de travail : Membre 2
+│   └── member2_lrm/                                    # Espace de travail : Membre 2
 │       ├── scripts/
-│       │   ├── preprocess_image.py             # Suppression automatique d'arrière-plan (rembg)
-│       │   ├── run_lrm_inference.py            # Pipeline d'inférence image-to-3D
-│       │   └── export_mesh.py                  # Extraction de maillage (.obj / .glb)
-│       └── configs/                            # Paramètres d'inférence Triplane/Transformer
+│       │   ├── preprocess_image.py                     # Suppression automatique d'arrière-plan (rembg)
+│       │   ├── run_lrm_inference.py                    # Pipeline d'inférence image-to-3D
+│       │   └── export_mesh.py                          # Extraction de maillage (.obj / .glb)
+│       └── configs/                                    # Paramètres d'inférence Triplane/Transformer
 │
-├── outputs/                                    # Résultats des inférences et rendus
-│   ├── nerf_renders/                           # Vues synthétisées et vidéos 360° NeRF
-│   ├── pixelnerf_renders/                      # Rendus générés par pixelNeRF
-│   ├── lrm_renders/                            # Rendus et maillages générés par LRM
-│   └── benchmark_results/                      # Tableaux de métriques générés et graphiques comparatifs
+├── outputs/                                            # Résultats des inférences et rendus
+│   ├── nerf_renders/                                   # Vues synthétisées et vidéos 360° NeRF
+│   ├── pixelnerf_renders/                              # Rendus générés par pixelNeRF
+│   ├── lrm_renders/                                    # Rendus et maillages générés par LRM
+│   └── benchmark_results/                              # Tableaux de métriques générés et graphiques comparatifs
 │
-├── reports/                                    # Livrables académiques
-│   ├── figures/                                # Captures d'écran et graphiques pour le rapport
-│   └── Rapport_Projet_2D_to_3D.pdf             # Rapport final du mini-projet
+├── reports/                                            # Livrables académiques
+│   ├── figures/                                        # Captures d'écran et graphiques pour le rapport
+│   └── Rapport_Projet_2D_to_3D.pdf                     # Rapport final du mini-projet
+│
+├── requirements.txt                                    # Dépendances Python globales
+└── environment.yml                                     # Définition de l'environnement Conda
 │
 ├── requirements.txt                            # Dépendances Python globales
 └── environment.yml                             # Définition de l'environnement Conda
@@ -180,7 +192,7 @@ PROJET/
   2. Acquisition de scènes réelles et calcul des trajectoires caméras via COLMAP.
   3. Déploiement et évaluation de pixelNeRF avec poids pré-entraînés ShapeNet.
   4. Génération des rendus synthétisés sur le jeu de test commun.
-* **Feuille de route détaillée :** [`docs/feuille_de_route_membre_1_nerf_pixelnerf.md`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/docs/feuille_de_route_membre_1_nerf_pixelnerf.md)
+* **Feuille de route détaillée :** [`feuilles_de_route/feuille_de_route_membre_1_nerf_pixelnerf.md`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/feuilles_de_route/feuille_de_route_membre_1_nerf_pixelnerf.md)
 
 ### Membre 2 : Modèles Fondation 3D & State-of-the-Art
 * **Missions :**
@@ -188,7 +200,7 @@ PROJET/
   2. Mise en place du pré-traitement automatisé (détourage d'arrière-plan via `rembg`, centrage et normalisation).
   3. Inférence instantanée *in-the-wild* et extraction de maillages surfaciques (`.obj`, `.glb`).
   4. Analyse architecturale du couplage Transformer DINO $\rightarrow$ Triplane.
-* **Feuille de route détaillée :** [`docs/feuille_de_route_membre_2_lrm.md`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/docs/feuille_de_route_membre_2_lrm.md)
+* **Feuille de route détaillée :** [`feuilles_de_route/feuille_de_route_membre_2_lrm.md`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/feuilles_de_route/feuille_de_route_membre_2_lrm.md)
 
 ### Tâches Communes
 * Définition des 3 à 5 objets/scènes de test étalons.
