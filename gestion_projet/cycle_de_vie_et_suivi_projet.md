@@ -229,7 +229,41 @@ RAPPORT FINAL
 
 ---
 
-## 4. Guide des Commandes Utiles & Synchronisation
+## 4. Points de Vigilance Techniques & Facteurs Clés de Succès (Best Practices)
+
+Pour garantir l'obtention de résultats exploitables et éviter les blocages majeurs lors des soutenances et évaluations, **3 règles d'ingénierie indispensables** doivent être rigoureusement appliquées par le binôme :
+
+### ⚠️ Règle 1 : Le Piège de pixelNeRF (Membre 1)
+* **Problème :** `pixelNeRF` a été entraîné sur le jeu synthétique **ShapeNet** (objets parfaits, poses fixes, fond blanc pur). Donner directement une photo non préparée prise au smartphone donnera un nuage flou inexploitable.
+* **Bonne pratique pour réussir :**
+  1. Valider d'abord le modèle sur les images de test canoniques de ShapeNet (*Chairs* ou *Cars*) pour s'assurer que l'inférence tourne sans bug.
+  2. Pour tester sur un objet réel du benchmark, **détourer impérativement l'objet à 100% avec `rembg`**, le centrer et le placer sur un fond blanc pur ($RGB = [255, 255, 255]$).
+
+### ⚠️ Règle 2 : L'Acquisition de Scène pour NeRF / COLMAP (Membre 1)
+* **Problème :** NeRF dépend mathématiquement des poses de caméras calculées par COLMAP. Si les correspondances de points clés échouent, NeRF ne convergera jamais.
+* **Bonne pratique pour réussir :**
+  1. **Zéro flou de mouvement (*motion blur*) :** Filmer en marchant lentement autour de l'objet (utiliser le mode 60 fps ou 4K avec éclairage fixe).
+  2. **Texture riche :** Éviter les objets monochromes lisses, transparents ou réfléchissants (verre, miroirs, métal poli). Préférer une plante en pot, une chaussure texturée, un jouet ou une figurine complexe.
+  3. L'arrière-plan ne doit pas bouger pendant la capture.
+
+### ⚠️ Règle 3 : Le Choix d'Implémentation pour LRM (Membre 2)
+* **Problème :** Le code original d'Adobe LRM n'est pas ouvert et ré-entraîner un modèle fondation 3D nécessite des dizaines de GPU A100/H100 et des semaines de calcul.
+* **Bonne pratique pour réussir :**
+  1. Ne pas tenter de ré-entraîner de zéro : utiliser directement **TripoSR** (`VAST-AI-Research/TripoSR`) ou les checkpoints d'**OpenLRM**.
+  2. TripoSR s'exécute en **0.5 seconde sur un GPU standard (même gratuit sur Google Colab)** et extrait directement un maillage surfacique 3D `.obj` / `.glb` avec texture exploitable dans MeshLab.
+
+### 🏆 Ce qui garantit l'Excellence devant le Jury (Livrables Clés)
+
+| Responsable | Démonstration Clé à Montrer | Format du Rendu |
+| :--- | :--- | :--- |
+| **🔵 Membre 1 (NeRF)** | Vidéo de trajectoire orbitale 360° fluide issue du viewer Nerfstudio sur un objet réel. | Vidéo MP4 HD + rapport de convergence |
+| **🔵 Membre 1 (pixelNeRF)** | Démonstration de reconstruction 3D à partir d'**une seule photo** (ShapeNet / objet détouré). | Vues synthétisées novel-view |
+| **🟠 Membre 2 (LRM / TripoSR)** | Génération instantanée (< 1s) d'un maillage 3D textured `.obj` ouvert en direct dans MeshLab/3D viewer. | Modèle 3D `.obj` / `.glb` |
+| **🔵 + 🟠 Binôme (Benchmark)** | Tableau comparatif croisé (PSNR, SSIM, LPIPS, temps d'inférence, mémoire VRAM) avec analyse des cas d'échecs. | Tableau chiffré + slides comparatives |
+
+---
+
+## 5. Guide des Commandes Utiles & Synchronisation
 
 ### Synchronisation Git entre binômes
 ```bash
