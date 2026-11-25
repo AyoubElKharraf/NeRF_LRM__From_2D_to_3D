@@ -32,24 +32,34 @@ flowchart LR
 
 ### 2.1. Tâche 1 : NeRF Classique (Nerfacto - Entraînement From Scratch)
 - **Objectif :** Entraîner le modèle de zéro (*from scratch*) sur la scène Lego pour illustrer le principe d'optimisation continue par scène (Mildenhall 2020).
-- **Fichiers associés :**
-  - **Notebook officiel NeRF (30k itérations) :** [`notebooks/01_nerf_lego_30k_complete.ipynb`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/notebooks/01_nerf_lego_30k_complete.ipynb)
-  - Anciens tests archivés : `notebooks/archive/` (`01_env_check_nerf.ipynb`, `02_check_status_nerf.ipynb`)
-  - Rendus obtenus (classés dans [`results_renders/`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/results_renders)) :
-    - `lego_5000_spiral.mp4` / `lego_5000_spiral_hd.mp4` (5 000 itérations - ébauche géométrique)
-    - En cours / Cible : `lego_30000_spiral_cristal.mp4` (30 000 itérations - haute fidélité cristalline)
-- **Méthode retenue :** **Entraînement complet From Scratch (30 000 itérations)**.
-- **Statut :** **En cours d'entraînement (session Colab)**.
+- **Fichiers associés & Rangements :**
+  - **Notebook officiel NeRF :** [`notebooks/01_nerf_lego_30k_complete.ipynb`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/notebooks/01_nerf_lego_30k_complete.ipynb)
+  - **Checkpoints sauvegardés :** [`models/nerf_checkpoints/lego_30000/`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/models/nerf_checkpoints/lego_30000/)
+    - Poids finaux : `step-000029999.ckpt` (242 Mo)
+    - Fichier de configuration : `config.yml`
+    - Tenseurs d'événements Tensorboard : `events.out.tfevents...`
+  - **Métriques quantitatives officielles :** [`outputs/benchmark_results/metrics_30000.json`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/outputs/benchmark_results/metrics_30000.json)
+    - PSNR : **17.76 dB** | SSIM : **0.77** | LPIPS : **0.13**
+  - **Vidéos disponibles :** [`results_renders/`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/results_renders/)
+    - `lego_5000_spiral.mp4` / `lego_5000_spiral_hd.mp4` (Rendus à 5 000 itérations)
+    - Note : Le rendu vidéo 30k sera régénéré ultérieurement avec un camera-path adapté. Le checkpoint et les métriques sont déjà parfaitement sécurisés.
+- **Statut NeRF :** **Entraînement 30k terminé & métriques validées ✅ (Mis en pause pour la vidéo finale)**.
 
 ### 2.2. Tâche 2 : pixelNeRF (Inférence avec Poids Pré-entraînés)
 - **Objectif :** Démontrer la généralisation sans ré-optimisation à partir d'une seule image 2D grâce au conditionnement spatial (Yu 2021).
-- **Méthode retenue :** **Inférence directe avec les poids officiels pré-entraînés** (ShapeNet / DTU). L'entraînement *from scratch* nécessitant des jours de calculs sur multi-GPU et des centaines de Go de données, l'inférence sur poids pré-entraînés est la démarche académique standard recommandée.
+- **Méthode retenue :** Inférence directe avec les poids officiels pré-entraînés sur ShapeNet SRN Chairs (`srn_chair`).
 - **Fichiers associés :**
-  - **Notebook officiel pixelNeRF (1-vue) :** [`notebooks/02_pixelnerf_inference.ipynb`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/notebooks/02_pixelnerf_inference.ipynb)
+  - **Notebook officiel pixelNeRF :** [`notebooks/02_pixelnerf_inference.ipynb`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/notebooks/02_pixelnerf_inference.ipynb)
   - Guide technique complet : [`docs/roadmaps/pixelnerf_guide_et_suivi.md`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/docs/roadmaps/pixelnerf_guide_et_suivi.md)
-  - Code source officiel de référence : [`repos_reference/pixel-nerf-master`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/repos_reference/pixel-nerf-master)
-  - Poids officiels pré-entraînés (Google Drive des auteurs) : `srn_chair`, `srn_car`, `sn64`.
-- **Statut :** **Notebook et guide créés, prêt à être exécuté dès la fin de NeRF ✅**
+  - **Résultats rapatriés de Google Drive :**
+    - Dossier source : [`pixelnerf_results/`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/pixelnerf_results/)
+    - Vidéo 3D générée : [`results_renders/pixelnerf_chair_1view.mp4`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/results_renders/pixelnerf_chair_1view.mp4)
+    - Image d'entrée 2D source : [`results_renders/pixelnerf_chair_1view_input.jpg`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/results_renders/pixelnerf_chair_1view_input.jpg)
+- **Analyse critique de la qualité :**
+  - Résolution native SRN : $128 \times 128$ pixels.
+  - La reconstruction à 1 vue (`P=64`) montre la forme globale de la chaise et son assise, mais présente des bords flous sur la face arrière (hallucination géométrique normale en l'absence d'information de profondeur).
+  - Piste d'amélioration testée : conditionnement multi-vues (`-P '64 104'`).
+- **Statut pixelNeRF :** **Inférence Single-View TERMINÉE & validée ✅**
 
 ---
 
@@ -78,10 +88,13 @@ Pour comparer équitablement les 3 approches dans le rapport de Master :
 
 | Métrique / Critère | NeRF (Toi) | pixelNeRF (Toi) | LRM / TripoSR (Samir) |
 | :--- | :--- | :--- | :--- |
-| **Nombre d'images d'entrée** | ~100 vues (Dense) | 1 à 3 vues (Sparse) | **1 vue (Monoculaire)** |
-| **Temps de calcul total** | ~10-20 min (entraînement) | Secondes (inférence) | **~0.6 s (inférence)** |
-| **Qualité visuelle (PSNR / SSIM)** | Très élevée sur la scène apprise | Modérée (généralisation) | Élevée avec géométrie complète |
+| **Nombre d'images d'entrée** | ~100 vues (Dense) | 1 vue (Monoculaire) | **1 vue (Monoculaire)** |
+| **Calibration requise ?** | Oui (COLMAP SfM) | Poses d'entraînement | **Non (In-the-wild)** |
+| **Temps de calcul total** | ~15 min (entraînement) | ~3 min (volume rendering) | **~0.6 s (inférence)** |
+| **Qualité visuelle** | PSNR: **17.76 dB** / SSIM: **0.77** | Silhouette fidèle, détails $128\times128$ | Haute fidélité (en cours) |
 | **Représentation finale** | Densité volumique (NeRF) | Densité volumique (NeRF) | **NeRF Triplane + Mesh 3D (.obj)** |
+
+- **Rapport de projet complet rédigé :** [`reports/RAPPORT_PROJET_2D_TO_3D.md`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/reports/RAPPORT_PROJET_2D_TO_3D.md) (Sections NeRF & pixelNeRF rédigées à 100% avec formules mathématiques et métriques réelles).
 
 ---
 
@@ -91,4 +104,25 @@ Pour comparer équitablement les 3 approches dans le rapport de Master :
 - **23-24 Nov 2026 :** Création du notebook NeRF 30k complet (`01_nerf_lego_30k_complete.ipynb`), résolution des quotas GPU et correction de sécurité PyTorch (`TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1`).
 - **25 Nov 2026 :** 
   - Restructuration propre du projet en architecture standard MLOps (`notebooks/`, `docs/`, `repos_reference/`, `results_renders/`).
-  - **Lancement officiel de la branche pixelNeRF** : création du guide théorique [`docs/roadmaps/pixelnerf_guide_et_suivi.md`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/docs/roadmaps/pixelnerf_guide_et_suivi.md) et du notebook d'inférence monoculaire [`notebooks/02_pixelnerf_inference.ipynb`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/notebooks/02_pixelnerf_inference.ipynb).
+  - **Validation complète de la phase Membre 1 (NeRF & pixelNeRF)** :
+    - NeRF entraîné à 30 000 itérations (checkpoint sauvegardé dans `models/nerf_checkpoints/lego_30000/`, métriques officielles PSNR: 17.76 dB / SSIM: 0.77 enregistrées).
+    - pixelNeRF validé en inférence monoculaire 1-vue avec les poids officiels (vidéo `results_renders/pixelnerf_chair_1view.mp4` et image source `results_renders/pixelnerf_chair_1view_input.jpg` sauvegardées).
+  - Rédaction intégrale des sections théoriques et expérimentales de NeRF et pixelNeRF dans [`reports/RAPPORT_PROJET_2D_TO_3D.md`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/reports/RAPPORT_PROJET_2D_TO_3D.md).
+
+---
+
+## 6. Prochaines Étapes pour la Reprise (Quand Samir termine sa phase)
+
+Dès que Samir livre ses résultats sur LRM / TripoSR, voici la feuille de route exacte pour finaliser le projet :
+
+1. **Rapatrier les livrables de Samir :**
+   - La vidéo 3D de rotation 360° générée par LRM (à placer dans `results_renders/`).
+   - Le maillage 3D extrait au format `.obj` ou `.glb` (à placer dans `outputs/lrm_renders/`).
+   - Le temps d'inférence précis (ex: ~0.6 seconde) et la VRAM consommée.
+2. **Tester LRM sur la même chaise que pixelNeRF :**
+   - Vérifier que Samir a bien testé l'image source commune [`results_renders/pixelnerf_chair_1view_input.jpg`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/results_renders/pixelnerf_chair_1view_input.jpg) pour afficher la comparaison directe dans le rapport.
+3. **Compléter le Rapport Final :**
+   - Remplir la **Section 4 (LRM)** du document [`reports/RAPPORT_PROJET_2D_TO_3D.md`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/reports/RAPPORT_PROJET_2D_TO_3D.md).
+   - Compléter la dernière colonne du grand tableau comparatif (Section 5).
+4. **Préparer la Présentation / Soutenance :**
+   - Créer les diapositives de soutenance avec la vidéo NeRF (multi-vues), la vidéo pixelNeRF (1-vue floue) et le rendu/maillage LRM (1-vue instantanée et nette).

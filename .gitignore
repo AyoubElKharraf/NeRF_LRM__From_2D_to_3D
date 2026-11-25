@@ -1,0 +1,19 @@
+# Checkpoints & Weights volumineux (> 100 Mo rejetés par GitHub)
+*.ckpt
+*.pt
+*.pth
+*.tar
+*.bin
+events.out.tfevents*
+
+# Données brutes et volumineuses
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Dossiers temporaires & caches
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.DS_Store
