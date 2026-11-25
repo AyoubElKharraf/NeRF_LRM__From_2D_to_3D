@@ -87,72 +87,42 @@ Le projet est structuré par domaines fonctionnels pour séparer rigoureusement 
 ```text
 PROJET/
 ├── README.md                                           # Documentation principale et synthèse du projet
+├── SUIVI_PROGRESS_PROJET.md                            # Tableau de bord unique de suivi du binôme
 │
-├── articles/                                           # Fiches d'analyse et articles scientifiques
-│   ├── article_1_nerf_mildenhall_et_al_2020.md         # Fiche de synthèse NeRF
-│   ├── article_2_pixelnerf_yu_et_al_2021.md            # Fiche de synthèse pixelNeRF
-│   ├── article_3_lrm_hong_et_al_2023.md                # Fiche de synthèse LRM
-│   ├── Article_NeRF.pdf                                # Papier de recherche NeRF
-│   ├── Article_LRM.pdf                                 # Papier de recherche LRM
-│   ├── prompt_ma_tre_du_projet_2d_vers_3d.md           # Prompt maître & cadrage théorique des articles
-│   └── urls_des_articles.md                            # Liens ArXiv, GitHub & démos
+├── notebooks/                                          # Notebooks Jupyter Google Colab d'expérimentation
+│   ├── 01_nerf_lego_30k_complete.ipynb                 # Pipeline complet NeRF (From Scratch - 30k itérations)
+│   ├── 02_pixelnerf_inference.ipynb                    # Pipeline pixelNeRF (Inférence Single-View avec poids officiels)
+│   └── archive/                                        # Anciens notebooks de setup archivés (01_env, 02_status)
 │
-├── feuilles_de_route/                                  # Feuilles de route opérationnelles individuelles
-│   ├── feuille_de_route_membre_1_nerf_pixelnerf.md     # Feuille de route Membre 1 (Toi)
-│   └── feuille_de_route_membre_2_lrm.md                # Feuille de route Membre 2 (Binôme)
+├── results_renders/                                    # Vidéos et rendus 3D générés par les modèles
+│   ├── exemple_de_resultat.mp4                         # Vidéo de référence netteté (convergence 30k)
+│   ├── lego_5000_spiral.mp4                            # Rendu NeRF 5k itérations
+│   ├── lego_5000_spiral_hd.mp4                         # Rendu NeRF 5k itérations HD
+│   └── lego_spiral_preview.mp4                         # Premier rendu de preview
 │
-├── gestion_projet/                                     # Pilotage, suivi de cycle de vie et évaluation
-│   ├── cycle_de_vie_et_suivi_projet.md                 # Dashboard vivant & checklist d'avancement
-│   └── evaluation/                                     # Protocole de test et métriques
-│       └── protocole_d_valuation_et_benchmark_comparatif.md # Protocole PSNR/SSIM/LPIPS & plan rapport
+├── docs/                                               # Toute la documentation scientifique et technique
+│   ├── articles/                                       # Fiches d'analyse et articles scientifiques PDF originaux
+│   │   ├── article_1_nerf_mildenhall_et_al_2020.md
+│   │   ├── article_2_pixelnerf_yu_et_al_2021.md
+│   │   ├── article_3_lrm_hong_et_al_2023.md
+│   │   ├── Article_NeRF.pdf
+│   │   └── Article_LRM.pdf
+│   ├── roadmaps/                                       # Feuilles de route opérationnelles & guides
+│   │   ├── feuille_de_route_membre_1_nerf_pixelnerf.md
+│   │   ├── feuille_de_route_membre_2_lrm.md
+│   │   └── pixelnerf_guide_et_suivi.md                 # Guide complet théorique & pratique pixelNeRF
+│   └── evaluation/                                     # Protocole de test et métriques (PSNR/SSIM/LPIPS)
+│       └── protocole_d_valuation_et_benchmark_comparatif.md
 │
-├── data/                                               # Datasets et jeux de données (à créer à la Phase 0)
-│   ├── raw/                                            # Données brutes (vidéos .mp4, photos non traitées)
-│   ├── processed/                                      # Données calibrées (après COLMAP / rembg)
-│   │   ├── colmap_scenes/                              # Sorties transforms.json pour Nerfstudio
-│   │   └── masked_single_images/                       # Images détourées au format RGB-Alpha pour LRM
-│   └── benchmark_samples/                              # 3 à 5 scènes/objets communs de référence pour le test
+├── repos_reference/                                    # Dépôts de recherche officiels originaux
+│   ├── nerf-master/                                    # Code officiel original NeRF (ECCV 2020)
+│   └── pixel-nerf-master/                              # Code officiel original pixelNeRF (CVPR 2021)
 │
-├── models/                                             # Poids et checkpoints pré-entraînés
-│   ├── nerf_checkpoints/                               # Modèles sauvegardés Nerfstudio
-│   ├── pixelnerf_checkpoints/                          # Checkpoints officiels ShapeNet (Chairs/Cars)
-│   └── lrm_checkpoints/                                # Poids OpenLRM / TripoSR téléchargés
-│
-├── src/                                                # Code source exécutable
-│   ├── common/                                         # Utilitaires partagés
-│   │   ├── metrics.py                                  # Scripts de calcul automatique PSNR / SSIM / LPIPS
-│   │   ├── io_transforms.py                            # Conversion de poses de caméras et de formats
-│   │   └── visualizer.py                               # Export de grilles comparatives et vidéos
-│   │
-│   ├── member1_nerf_pixelnerf/                         # Espace de travail : Membre 1
-│   │   ├── scripts/
-│   │   │   ├── run_colmap.bat / .sh                    # Automatisation extraction des poses
-│   │   │   ├── train_nerf.py                           # Script de lancement Nerfstudio (Nerfacto)
-│   │   │   └── infer_pixelnerf.py                      # Inférence monoculaire pixelNeRF
-│   │   └── configs/                                    # Fichiers de configuration et hyperparamètres
-│   │
-│   └── member2_lrm/                                    # Espace de travail : Membre 2
-│       ├── scripts/
-│       │   ├── preprocess_image.py                     # Suppression automatique d'arrière-plan (rembg)
-│       │   ├── run_lrm_inference.py                    # Pipeline d'inférence image-to-3D
-│       │   └── export_mesh.py                          # Extraction de maillage (.obj / .glb)
-│       └── configs/                                    # Paramètres d'inférence Triplane/Transformer
-│
-├── outputs/                                            # Résultats des inférences et rendus
-│   ├── nerf_renders/                                   # Vues synthétisées et vidéos 360° NeRF
-│   ├── pixelnerf_renders/                              # Rendus générés par pixelNeRF
-│   ├── lrm_renders/                                    # Rendus et maillages générés par LRM
-│   └── benchmark_results/                              # Tableaux de métriques générés et graphiques comparatifs
-│
-├── reports/                                            # Livrables académiques
-│   ├── figures/                                        # Captures d'écran et graphiques pour le rapport
-│   └── Rapport_Projet_2D_to_3D.pdf                     # Rapport final du mini-projet
-│
-├── requirements.txt                                    # Dépendances Python globales
-└── environment.yml                                     # Définition de l'environnement Conda
-│
-├── requirements.txt                            # Dépendances Python globales
-└── environment.yml                             # Définition de l'environnement Conda
+├── data/                                               # Datasets et jeux de données (raw, processed, benchmark)
+├── models/                                             # Checkpoints et poids pré-entraînés
+├── outputs/                                            # Sorties de logs et métriques brutes
+├── reports/                                            # Rapport final et figures académiques
+└── src/                                                # Scripts Python partagés (member1 et member2)
 ```
 
 ---
