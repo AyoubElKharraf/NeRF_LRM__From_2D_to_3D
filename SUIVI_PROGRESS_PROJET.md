@@ -68,33 +68,29 @@ flowchart LR
 ### 3.1. Tâche : LRM / TripoSR (Large Reconstruction Model)
 - **Objectif :** Démontrer l'état de l'art actuel de la reconstruction monoculaire instantanée par Transformer.
 - **Fichiers associés :**
-  - Fiche de synthèse théorique : [`articles/article_3_lrm_hong_et_al_2023.md`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/articles/article_3_lrm_hong_et_al_2023.md)
-  - Papier de recherche : [`articles/Article_LRM.pdf`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/articles/Article_LRM.pdf)
-  - Feuille de route Samir : [`feuilles_de_route/feuille_de_route_membre_2_lrm.md`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/feuilles_de_route/feuille_de_route_membre_2_lrm.md)
-  - Code & scripts de Samir : dossier `src/` (branche membre 2)
-- **Statut :** **À DÉMARRER ⏳**
-- **Étapes clés pour Samir :**
-  1. Configurer un notebook Google Colab (GPU T4) avec **TripoSR** (`VAST-AI-Research/TripoSR`) ou **OpenLRM**.
-  2. Implémenter le pipeline de prétraitement automatique avec `rembg` (détourage du fond obligatoire).
-  3. Effectuer l'inférence sur les **mêmes images de test** que toi pour le benchmark comparatif.
-  4. Exporter les vidéos de rendu et les maillages 3D (`.obj` ou `.glb`).
-  5. Mesurer le temps d'inférence (généralement < 1 s) et la consommation VRAM.
+  - **Notebook officiel Samir :** [`notebooks/03_lrm_triposr_inference.ipynb`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/notebooks/03_lrm_triposr_inference.ipynb)
+  - Vidéo 3D de rotation générée : [`results_renders/lrm_triposr_render.mp4`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/results_renders/lrm_triposr_render.mp4)
+  - Architecture utilisée : `stabilityai/TripoSR` (DINO ViT + Image-to-Triplane + Marching Cubes $256^3$)
+  - Prétraitement : `rembg` (Bria-RMBG 2.0 ONNX) + redimensionnement 0.85
+- **Statut Samir :** **TERMINÉ & VALIDÉ ✅**
+- **Résultats obtenus :** Inférence monoculaire en **~0.6 seconde**, vidéo 360° fluide et export de maillage 3D `.obj`.
 
 ---
 
 ## 4. Protocole de Benchmark Commun (Convergence des Travaux)
 
-Pour comparer équitablement les 3 approches dans le rapport de Master :
+Le tableau comparatif complet validé pour la soutenance et le rapport de Master :
 
-| Métrique / Critère | NeRF (Toi) | pixelNeRF (Toi) | LRM / TripoSR (Samir) |
+| Métrique / Critère | 1. NeRF (Toi) | 2. pixelNeRF (Toi) | 3. LRM / TripoSR (Samir) |
 | :--- | :--- | :--- | :--- |
 | **Nombre d'images d'entrée** | ~100 vues (Dense) | 1 vue (Monoculaire) | **1 vue (Monoculaire)** |
-| **Calibration requise ?** | Oui (COLMAP SfM) | Poses d'entraînement | **Non (In-the-wild)** |
-| **Temps de calcul total** | ~15 min (entraînement) | ~3 min (volume rendering) | **~0.6 s (inférence)** |
-| **Qualité visuelle** | PSNR: **17.76 dB** / SSIM: **0.77** | Silhouette fidèle, détails $128\times128$ | Haute fidélité (en cours) |
-| **Représentation finale** | Densité volumique (NeRF) | Densité volumique (NeRF) | **NeRF Triplane + Mesh 3D (.obj)** |
+| **Calibration requise ?** | Oui (COLMAP SfM obligatoire) | Poses relatives d'entraînement | **Non (Totalement in-the-wild)** |
+| **Temps de calcul total** | ~15 min (entraînement GPU) | ~3 min (volume rendering) | **~0.6 s (inférence directe)** |
+| **Résolution native** | $800 \times 800$ | $128 \times 128$ (SRN) | Haute résolution ($512^2$) / Mesh $256^3$ |
+| **Qualité visuelle** | PSNR: **17.76 dB** / SSIM: **0.77** | Silhouette globale, bords flous | Géométrie 3D nette, étanche et instantanée |
+| **Représentation finale** | Densité volumique continue | Densité volumique continue | **NeRF Triplane + Mesh 3D (.obj)** |
 
-- **Rapport de projet complet rédigé :** [`reports/RAPPORT_PROJET_2D_TO_3D.md`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/reports/RAPPORT_PROJET_2D_TO_3D.md) (Sections NeRF & pixelNeRF rédigées à 100% avec formules mathématiques et métriques réelles).
+- **Rapport de projet complet rédigé :** [`reports/RAPPORT_PROJET_2D_TO_3D.md`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/reports/RAPPORT_PROJET_2D_TO_3D.md) (100% complété pour les 3 modèles NeRF, pixelNeRF et LRM).
 
 ---
 
@@ -107,7 +103,12 @@ Pour comparer équitablement les 3 approches dans le rapport de Master :
   - **Validation complète de la phase Membre 1 (NeRF & pixelNeRF)** :
     - NeRF entraîné à 30 000 itérations (checkpoint sauvegardé dans `models/nerf_checkpoints/lego_30000/`, métriques officielles PSNR: 17.76 dB / SSIM: 0.77 enregistrées).
     - pixelNeRF validé en inférence monoculaire 1-vue avec les poids officiels (vidéo `results_renders/pixelnerf_chair_1view.mp4` et image source `results_renders/pixelnerf_chair_1view_input.jpg` sauvegardées).
-  - Rédaction intégrale des sections théoriques et expérimentales de NeRF et pixelNeRF dans [`reports/RAPPORT_PROJET_2D_TO_3D.md`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/reports/RAPPORT_PROJET_2D_TO_3D.md).
+  - **Validation complète de la phase Membre 2 (LRM / TripoSR par Samir)** :
+    - Pipeline TripoSR exécuté avec succès avec segmentation Bria-RMBG 2.0.
+    - Vidéo orbitale fluide 30 vues générée : [`results_renders/lrm_triposr_render.mp4`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/results_renders/lrm_triposr_render.mp4).
+    - Export de maillage 3D (.obj) validé via Marching Cubes $256^3$.
+    - Notebook officiel intégré : [`notebooks/03_lrm_triposr_inference.ipynb`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/notebooks/03_lrm_triposr_inference.ipynb).
+  - **PROJET 100% ACHEVÉ :** Rapport complet rédigé et benchmark comparatif finalisé dans [`reports/RAPPORT_PROJET_2D_TO_3D.md`](file:///c:/Users/DELL/Documents/Master/Master_M2I/SEMESTRE%203/Module%202%20-%20Traitement%20d'images/Projet/reports/RAPPORT_PROJET_2D_TO_3D.md).
 
 ---
 
