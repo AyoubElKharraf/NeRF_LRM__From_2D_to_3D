@@ -612,31 +612,45 @@
               
               <!-- Quick presets -->
               <div class="grid grid-cols-3 gap-2">
-                <button onclick="loadPresetImage('chair')" class="p-2 rounded-lg border border-slate-800 bg-slate-950 hover:border-sky-500/50 flex flex-col items-center space-y-1">
+                <button type="button" onclick="loadPresetImage('chair')" id="preset-btn-chair" class="p-2 rounded-lg border border-sky-500 bg-sky-500/10 flex flex-col items-center space-y-1 transition-all">
                   <img src="assets/images/pixelnerf_chair_1view_input.jpg" class="w-10 h-10 object-contain rounded">
-                  <span class="text-[10px] text-slate-300 font-medium">Chaise SRN</span>
+                  <span class="text-[10px] text-slate-200 font-medium">Chaise SRN</span>
                 </button>
-                <button onclick="loadPresetImage('chair2')" class="p-2 rounded-lg border border-slate-800 bg-slate-950 hover:border-sky-500/50 flex flex-col items-center space-y-1">
-                  <div class="w-10 h-10 bg-slate-800 rounded flex items-center justify-center text-slate-400">
-                    <i data-lucide="armchair" class="w-5 h-5"></i>
+                <button type="button" onclick="loadPresetImage('chair2')" id="preset-btn-chair2" class="p-2 rounded-lg border border-slate-800 bg-slate-950 hover:border-slate-700 flex flex-col items-center space-y-1 transition-all">
+                  <div class="w-10 h-10 bg-slate-800 rounded flex items-center justify-center text-slate-300 font-bold text-xs">
+                    🪑 2
                   </div>
-                  <span class="text-[10px] text-slate-300 font-medium">Chaise 2</span>
+                  <span class="text-[10px] text-slate-300 font-medium">Fauteuil</span>
                 </button>
-                <button onclick="loadPresetImage('lego')" class="p-2 rounded-lg border border-slate-800 bg-slate-950 hover:border-sky-500/50 flex flex-col items-center space-y-1">
-                  <div class="w-10 h-10 bg-slate-800 rounded flex items-center justify-center text-slate-400">
-                    <i data-lucide="truck" class="w-5 h-5"></i>
+                <button type="button" onclick="loadPresetImage('lego')" id="preset-btn-lego" class="p-2 rounded-lg border border-slate-800 bg-slate-950 hover:border-slate-700 flex flex-col items-center space-y-1 transition-all">
+                  <div class="w-10 h-10 bg-amber-500/20 text-amber-300 rounded flex items-center justify-center font-bold text-xs">
+                    🚜 Lego
                   </div>
-                  <span class="text-[10px] text-slate-300 font-medium">Lego Bulldozer</span>
+                  <span class="text-[10px] text-slate-300 font-medium">Bulldozer</span>
                 </button>
               </div>
 
-              <!-- Upload Area -->
-              <label class="mt-2 flex flex-col items-center justify-center p-4 border-2 border-dashed border-slate-800 hover:border-sky-500/50 rounded-xl cursor-pointer bg-slate-950/50 transition-colors">
-                <i data-lucide="upload-cloud" class="w-6 h-6 text-slate-400 mb-1"></i>
-                <span class="text-xs text-slate-300 font-medium">Importer une image personnalisée</span>
-                <span class="text-[10px] text-slate-500">PNG, JPG jusqu'à 10 Mo</span>
-                <input type="file" id="pg-upload-input" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
-              </label>
+              <!-- Upload Area & Image Preview -->
+              <div class="space-y-2 mt-2">
+                <label class="flex flex-col items-center justify-center p-3 border-2 border-dashed border-slate-800 hover:border-sky-500/50 rounded-xl cursor-pointer bg-slate-950/50 transition-colors">
+                  <i data-lucide="upload-cloud" class="w-5 h-5 text-slate-400 mb-1"></i>
+                  <span class="text-xs text-slate-300 font-medium">Importer une photo personnelle</span>
+                  <span class="text-[10px] text-slate-500">PNG, JPG détouré ou fond uni</span>
+                  <input type="file" id="pg-upload-input" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                </label>
+
+                <!-- Mini Image Selected Preview Banner -->
+                <div id="pg-preview-container" class="flex items-center space-x-3 p-2.5 rounded-xl bg-slate-950 border border-slate-800">
+                  <img id="pg-selected-img" src="assets/images/pixelnerf_chair_1view_input.jpg" class="w-12 h-12 object-contain rounded-lg bg-slate-900 border border-slate-800">
+                  <div class="flex-1 min-w-0">
+                    <div class="text-xs font-semibold text-white truncate" id="pg-selected-title">Chaise ShapeNet SRN (Vue #64)</div>
+                    <div class="text-[10px] text-emerald-400 flex items-center space-x-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                      <span id="pg-selected-status">Image prête pour la reconstruction</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Options -->
@@ -667,19 +681,39 @@
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-2">
                 <i data-lucide="orbit" class="w-5 h-5 text-sky-400"></i>
-                <h3 class="text-base font-bold text-white">Visualiseur 3D Interactif (Three.js)</h3>
+                <h3 class="text-base font-bold text-white">Visualiseur 3D Interactif</h3>
               </div>
-              <div id="pg-status-badge" class="px-2.5 py-0.5 rounded-full text-xs font-mono bg-slate-800 text-slate-400">
-                Prêt (Faites pivoter à la souris)
+              <!-- Toggle View Mode: Three.js Interactive OR Real Rendered Video -->
+              <div class="flex items-center space-x-2 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
+                <button type="button" onclick="setViewerDisplayMode('three')" id="vm-btn-three" class="px-2.5 py-1 rounded-lg bg-sky-500 text-white font-medium shadow-sm transition-all">
+                  Vue 3D Mesh (Three.js)
+                </button>
+                <button type="button" onclick="setViewerDisplayMode('video')" id="vm-btn-video" class="px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition-all">
+                  Vidéo 360° du Modèle
+                </button>
               </div>
             </div>
 
             <!-- Canvas 3D Viewer Container -->
             <div id="three-container" class="relative w-full h-96 rounded-xl overflow-hidden bg-slate-950 border border-slate-800 shadow-inner flex items-center justify-center">
+              
+              <!-- Video Alternative Player inside the viewer -->
+              <video id="pg-render-video" class="hidden w-full h-full object-contain bg-black" autoplay loop muted playsinline></video>
+
               <!-- Overlay loader during simulation -->
-              <div id="pg-loader" class="hidden absolute inset-0 bg-slate-950/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center space-y-3">
-                <div class="w-10 h-10 border-4 border-sky-500/20 border-t-sky-500 rounded-full animate-spin"></div>
-                <div class="text-xs font-mono text-sky-400" id="pg-loader-text">Inférence Triplane en cours... (~0.6s)</div>
+              <div id="pg-loader" class="hidden absolute inset-0 bg-slate-950/85 backdrop-blur-md z-20 flex flex-col items-center justify-center space-y-3">
+                <div class="w-12 h-12 border-4 border-sky-500/20 border-t-sky-500 rounded-full animate-spin"></div>
+                <div class="text-sm font-semibold text-white" id="pg-loader-title">Reconstruction 3D en cours...</div>
+                <div class="text-xs font-mono text-sky-400" id="pg-loader-text">Détourage Bria-RMBG + ViT DINO</div>
+                <div class="w-48 bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                  <div id="pg-progress-bar" class="bg-gradient-to-r from-sky-400 to-indigo-500 h-full w-0 transition-all duration-300"></div>
+                </div>
+              </div>
+
+              <!-- Top Left Model Badge inside canvas -->
+              <div id="pg-canvas-badge" class="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-mono glassmorphism border border-slate-700/80 text-cyan-300 z-10 flex items-center space-x-1.5">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                <span id="pg-canvas-badge-text">Mode interactif : Faîtes tourner à la souris</span>
               </div>
             </div>
 
@@ -876,6 +910,35 @@
       scene.add(currentMesh);
     }
 
+    // View Mode Toggle (Three.js 3D Mesh vs Video Player)
+    let currentViewerMode = 'three';
+
+    function setViewerDisplayMode(mode) {
+      currentViewerMode = mode;
+      const btnThree = document.getElementById('vm-btn-three');
+      const btnVideo = document.getElementById('vm-btn-video');
+      const videoElem = document.getElementById('pg-render-video');
+      const threeCanvas = renderer ? renderer.domElement : null;
+      const badgeText = document.getElementById('pg-canvas-badge-text');
+
+      if (mode === 'three') {
+        btnThree.className = "px-2.5 py-1 rounded-lg bg-sky-500 text-white font-medium shadow-sm transition-all";
+        btnVideo.className = "px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition-all";
+        videoElem.classList.add('hidden');
+        videoElem.pause();
+        if (threeCanvas) threeCanvas.style.display = 'block';
+        badgeText.textContent = "Mode interactif : Faîtes tourner à la souris";
+      } else {
+        btnVideo.className = "px-2.5 py-1 rounded-lg bg-sky-500 text-white font-medium shadow-sm transition-all";
+        btnThree.className = "px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition-all";
+        if (threeCanvas) threeCanvas.style.display = 'none';
+        videoElem.classList.remove('hidden');
+        videoElem.src = selectedModel === 'lrm' ? 'assets/videos/lrm_triposr_render.mp4' : 'assets/videos/pixelnerf_chair_1view.mp4';
+        videoElem.play();
+        badgeText.textContent = selectedModel === 'lrm' ? "Vidéo 360° fluide générée par LRM" : "Vidéo 360° générée par pixelNeRF";
+      }
+    }
+
     // Model selection in playground
     function selectPlaygroundModel(m) {
       selectedModel = m;
@@ -889,53 +952,124 @@
         btnPixel.className = "p-3 rounded-xl border border-indigo-500 bg-indigo-500/10 text-left transition-all";
         btnLrm.className = "p-3 rounded-xl border border-slate-800 bg-slate-950 text-left transition-all hover:border-slate-700";
       }
-    }
 
-    function loadPresetImage(preset) {
-      console.log("Preset loaded:", preset);
-    }
-
-    function handleImageUpload(e) {
-      const file = e.target.files[0];
-      if (file) {
-        alert("Image importée : " + file.name + ". Prête pour la synthèse 3D !");
+      if (currentViewerMode === 'video') {
+        setViewerDisplayMode('video');
       }
     }
 
+    // Preset Selection
+    let currentPreset = 'chair';
+    function loadPresetImage(preset) {
+      currentPreset = preset;
+      const img = document.getElementById('pg-selected-img');
+      const title = document.getElementById('pg-selected-title');
+      const status = document.getElementById('pg-selected-status');
+
+      ['chair', 'chair2', 'lego'].forEach(p => {
+        const b = document.getElementById(`preset-btn-${p}`);
+        b.className = "p-2 rounded-lg border border-slate-800 bg-slate-950 hover:border-slate-700 flex flex-col items-center space-y-1 transition-all";
+      });
+      document.getElementById(`preset-btn-${preset}`).className = "p-2 rounded-lg border border-sky-500 bg-sky-500/10 flex flex-col items-center space-y-1 transition-all";
+
+      if (preset === 'chair') {
+        img.src = "assets/images/pixelnerf_chair_1view_input.jpg";
+        title.textContent = "Chaise ShapeNet SRN (Vue #64)";
+        status.textContent = "Image de test officielle (128x128)";
+      } else if (preset === 'chair2') {
+        img.src = "assets/images/pixelnerf_chair_1view_input.jpg";
+        title.textContent = "Fauteuil de bureau 3D";
+        status.textContent = "Prêt pour segmentation Bria-RMBG";
+      } else {
+        img.src = "assets/images/pixelnerf_chair_1view_input.jpg";
+        title.textContent = "Lego Bulldozer (Scène synthétique)";
+        status.textContent = "Compatible NeRF / LRM";
+      }
+    }
+
+    // Upload custom image
+    function handleImageUpload(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          document.getElementById('pg-selected-img').src = evt.target.result;
+          document.getElementById('pg-selected-title').textContent = file.name;
+          document.getElementById('pg-selected-status').textContent = `Fichier chargé (${(file.size / 1024).toFixed(1)} Ko)`;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Launch 3D Generation Simulation
     function runInferenceSimulation() {
       const loader = document.getElementById('pg-loader');
+      const loaderTitle = document.getElementById('pg-loader-title');
       const loaderText = document.getElementById('pg-loader-text');
-      const statusBadge = document.getElementById('pg-status-badge');
+      const progressBar = document.getElementById('pg-progress-bar');
+      const badgeText = document.getElementById('pg-canvas-badge-text');
       const resModelName = document.getElementById('res-model-name');
       const resTime = document.getElementById('res-time');
       const resDesc = document.getElementById('res-desc');
+      const videoElem = document.getElementById('pg-render-video');
 
       loader.classList.remove('hidden');
+      progressBar.style.width = '10%';
 
       if (selectedModel === 'lrm') {
-        loaderText.textContent = "Pipeline TripoSR en cours (rembg + ViT DINO + Triplane)...";
+        loaderTitle.textContent = "Pipeline TripoSR (Transformer instantané)...";
+        loaderText.textContent = "1. Détourage Bria-RMBG 2.0 ONNX";
+
+        setTimeout(() => {
+          progressBar.style.width = '55%';
+          loaderText.textContent = "2. ViT DINO Encoder ⟶ Triplane NeRF";
+        }, 300);
+
+        setTimeout(() => {
+          progressBar.style.width = '100%';
+          loaderText.textContent = "3. Marching Cubes 256³ (Mesh .obj extrait)";
+        }, 600);
+
         setTimeout(() => {
           loader.classList.add('hidden');
           createChairMesh('lrm');
-          statusBadge.textContent = "Inférence LRM terminée avec succès";
-          statusBadge.className = "px-2.5 py-0.5 rounded-full text-xs font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30";
+          
+          badgeText.textContent = "✅ Rendu LRM généré en 0.62 s (Faîtes pivoter à la souris)";
           resModelName.textContent = "LRM / TripoSR (Hong et al. 2023)";
           resModelName.className = "text-cyan-400 font-bold";
-          resTime.textContent = "Temps : 0.64 s";
-          resDesc.textContent = "Reconstruction instantanée haute fidélité. Le décodeur Transformer a généré les 3 plans orthogonaux du Triplane et extrait un maillage .obj étanche via Marching Cubes 256³.";
-        }, 800);
+          resTime.textContent = "Temps : 0.62 s (Inférence directe GPU)";
+          resDesc.textContent = "Succès de la reconstruction instantanée. L'encodeur DINO ViT a extrait les caractéristiques sémantiques globales et le décodeur Transformer a généré les 3 plans orthogonaux du Triplane (XY, XZ, YZ). Le maillage 3D étanche a été extrait en 0.6s.";
+
+          // Preload video if switched
+          videoElem.src = "assets/videos/lrm_triposr_render.mp4";
+        }, 900);
+
       } else {
-        loaderText.textContent = "pixelNeRF (ResNet-34 + Volume Rendering)...";
+        loaderTitle.textContent = "pixelNeRF (Conditionnement CNN ResNet)...";
+        loaderText.textContent = "1. Extraction Pyramide de Features ResNet-34";
+
+        setTimeout(() => {
+          progressBar.style.width = '50%';
+          loaderText.textContent = "2. Projection spatiale π(X) & Ray Marching...";
+        }, 500);
+
+        setTimeout(() => {
+          progressBar.style.width = '100%';
+          loaderText.textContent = "3. Quadrature du Rendu Volumique discret";
+        }, 1100);
+
         setTimeout(() => {
           loader.classList.add('hidden');
           createChairMesh('pixelnerf');
-          statusBadge.textContent = "Inférence pixelNeRF terminée (Volume discret)";
-          statusBadge.className = "px-2.5 py-0.5 rounded-full text-xs font-mono bg-indigo-500/20 text-indigo-300 border border-indigo-500/30";
+          
+          badgeText.textContent = "✅ Rendu pixelNeRF généré (Volume discret 128px)";
           resModelName.textContent = "pixelNeRF (Yu et al. 2021)";
           resModelName.className = "text-indigo-400 font-bold";
-          resTime.textContent = "Temps : 3 min 12 s (Ray Marching)";
-          resDesc.textContent = "Conditionnement spatialisé via ResNet-34 sur ShapeNet 128px. La forme générale de l'assise est restituée, mais la face cachée présente un lissage statistique typique du problème 1-vue.";
-        }, 1500);
+          resTime.textContent = "Temps : 3 min 12 s (Volume Rendering)";
+          resDesc.textContent = "Conditionnement spatialisé via ResNet-34 sur ShapeNet 128px. La forme de la chaise est fidèlement reconstruite sur la face visible, avec un léger lissage statistique sur les faces occluses.";
+
+          videoElem.src = "assets/videos/pixelnerf_chair_1view.mp4";
+        }, 1600);
       }
     }
   </script>
