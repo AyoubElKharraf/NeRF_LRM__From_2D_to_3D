@@ -480,72 +480,254 @@
     <section id="tab-metrics" class="hidden space-y-8 animate-fade-in">
       
       <div>
-        <h2 class="text-2xl font-bold text-white mb-2">Comprendre les Métriques d'Évaluation</h2>
+        <h2 class="text-2xl font-bold text-white mb-2">Métriques d'Évaluation & Comparaison Visuelle des 3 Modèles</h2>
         <p class="text-sm text-slate-400 max-w-3xl">
-          En vision 3D et synthèse de nouvelles vues (*Novel View Synthesis*), on évalue quantitativement la fidélité de l'image générée par rapport à la photo réelle de référence (*Ground Truth*) avec trois métriques complémentaires :
+          En vision 3D et synthèse de nouvelles vues (*Novel View Synthesis*), on évalue quantitativement la fidélité de l'image générée par rapport à la photo réelle de référence (*Ground Truth*) avec trois métriques complémentaires (PSNR, SSIM, LPIPS), tout en analysant visuellement la cohérence géométrique 3D.
         </p>
       </div>
 
-      <!-- 3 Metrics Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- MATRICE DE COMPARAISON VISUELLE CÔTE À CÔTE -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+          <i data-lucide="split" class="w-5 h-5 text-indigo-400"></i>
+          <span>Comparaison Visuelle Directe (NeRF vs pixelNeRF vs LRM)</span>
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          <!-- 1. CARTE VISUELLE NERF -->
+          <div class="rounded-2xl border border-sky-500/30 bg-slate-900/60 p-5 space-y-4 flex flex-col justify-between hover:border-sky-500/60 transition-all">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-sky-500/10 text-sky-400 border border-sky-500/20">1. NeRF (Mildenhall 2020)</span>
+                <span class="text-xs font-mono text-emerald-400">Excellente Scène</span>
+              </div>
+              <div class="relative rounded-xl overflow-hidden border border-slate-800 bg-black aspect-video">
+                <video src="assets/videos/lego_5000_spiral_hd.mp4" controls autoplay loop muted class="w-full h-full object-cover"></video>
+              </div>
+              <div class="text-xs text-slate-300 font-semibold">Rendu Volumétrique Continu (Lego 800×800)</div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                Apprentissage par cœur d'une scène complète via ~100 vues calibrées. Les détails géométriques fins et réflexions spéculaires sont parfaitement restitués.
+              </p>
+            </div>
+
+            <div class="pt-3 border-t border-slate-800 space-y-2">
+              <div class="grid grid-cols-3 gap-2 text-center">
+                <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                  <div class="text-[10px] text-slate-500 uppercase">PSNR</div>
+                  <div class="text-xs font-bold text-sky-400 font-mono">17.76 dB</div>
+                </div>
+                <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                  <div class="text-[10px] text-slate-500 uppercase">SSIM</div>
+                  <div class="text-xs font-bold text-sky-400 font-mono">0.77</div>
+                </div>
+                <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                  <div class="text-[10px] text-slate-500 uppercase">LPIPS</div>
+                  <div class="text-xs font-bold text-emerald-400 font-mono">0.13</div>
+                </div>
+              </div>
+              <div class="text-[11px] text-slate-400 flex justify-between pt-1">
+                <span>Temps : <strong class="text-slate-200">~15 min (T4)</strong></span>
+                <span>Sortie : <strong class="text-sky-300">Volume 5D</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. CARTE VISUELLE PIXELNERF -->
+          <div class="rounded-2xl border border-indigo-500/30 bg-slate-900/60 p-5 space-y-4 flex flex-col justify-between hover:border-indigo-500/60 transition-all">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">2. pixelNeRF (Yu 2021)</span>
+                <span class="text-xs font-mono text-amber-400">Flou Face Arrière</span>
+              </div>
+              <div class="relative rounded-xl overflow-hidden border border-slate-800 bg-black aspect-video">
+                <video src="assets/videos/pixelnerf_chair_1view.mp4" controls autoplay loop muted class="w-full h-full object-cover"></video>
+              </div>
+              <div class="text-xs text-slate-300 font-semibold">Volume Conditionné CNN (ShapeNet 128×128)</div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                Génération monoculaire (1 vue). L'avant et la silhouette sont fidèles, mais la face cachée est lissée par le prior statistique moyen du dataset.
+              </p>
+            </div>
+
+            <div class="pt-3 border-t border-slate-800 space-y-2">
+              <div class="grid grid-cols-3 gap-2 text-center">
+                <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                  <div class="text-[10px] text-slate-500 uppercase">Résolution</div>
+                  <div class="text-xs font-bold text-amber-400 font-mono">128² px</div>
+                </div>
+                <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                  <div class="text-[10px] text-slate-500 uppercase">Généralis.</div>
+                  <div class="text-xs font-bold text-indigo-400 font-mono">Chaises</div>
+                </div>
+                <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                  <div class="text-[10px] text-slate-500 uppercase">Géométrie</div>
+                  <div class="text-xs font-bold text-amber-400 font-mono">Floue dos</div>
+                </div>
+              </div>
+              <div class="text-[11px] text-slate-400 flex justify-between pt-1">
+                <span>Temps : <strong class="text-slate-200">~3 min rendering</strong></span>
+                <span>Sortie : <strong class="text-indigo-300">Volume CNN</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. CARTE VISUELLE LRM / TRIPOSR -->
+          <div class="rounded-2xl border border-cyan-500/30 bg-slate-900/60 p-5 space-y-4 flex flex-col justify-between hover:border-cyan-500/60 transition-all">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">3. LRM / TripoSR (2023)</span>
+                <span class="text-xs font-mono text-emerald-400">Instantané & Étanche</span>
+              </div>
+              <div class="relative rounded-xl overflow-hidden border border-slate-800 bg-black aspect-video">
+                <video src="assets/videos/lrm_triposr_render.mp4" controls autoplay loop muted class="w-full h-full object-cover"></video>
+              </div>
+              <div class="text-xs text-slate-300 font-semibold">Transformer Triplane + Maillage .OBJ (512×512)</div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                Modèle de fondation à grande échelle. Prédit un triplan complet et extrait instantanément un vrai maillage polygonal 3D manipulable.
+              </p>
+            </div>
+
+            <div class="pt-3 border-t border-slate-800 space-y-2">
+              <div class="grid grid-cols-3 gap-2 text-center">
+                <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                  <div class="text-[10px] text-slate-500 uppercase">Vitesse</div>
+                  <div class="text-xs font-bold text-emerald-400 font-mono">0.62 s</div>
+                </div>
+                <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                  <div class="text-[10px] text-slate-500 uppercase">Marching C.</div>
+                  <div class="text-xs font-bold text-cyan-400 font-mono">256³</div>
+                </div>
+                <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                  <div class="text-[10px] text-slate-500 uppercase">Export</div>
+                  <div class="text-xs font-bold text-emerald-400 font-mono">.OBJ 3D</div>
+                </div>
+              </div>
+              <div class="text-[11px] text-slate-400 flex justify-between pt-1">
+                <span>Temps : <strong class="text-emerald-400 font-bold">&lt; 1s (GPU T4)</strong></span>
+                <span>Sortie : <strong class="text-cyan-300">Maillage + Vidéo</strong></span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- COMPARAISON DES PROFILES DE PERFORMANCE (BARRES HORIZONTALES) -->
+      <div class="p-6 rounded-2xl border border-slate-800 bg-slate-900/60 space-y-5">
+        <h3 class="text-base font-bold text-white flex items-center space-x-2">
+          <i data-lucide="bar-chart-3" class="w-5 h-5 text-sky-400"></i>
+          <span>Profil Comparatif des 3 Approches (Synthèse Technique)</span>
+        </h3>
+
+        <div class="space-y-4 text-xs">
+          <!-- Vitesse d'Inférence -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-slate-300">
+              <span class="font-semibold">Vitesse d'Inférence / Génération (Plus rapide = Mieux)</span>
+              <span class="text-slate-400">LRM (&lt;1s) &gt;&gt; pixelNeRF (~3min) &gt;&gt; NeRF (~15min train)</span>
+            </div>
+            <div class="h-3 w-full bg-slate-950 rounded-full overflow-hidden flex">
+              <div class="bg-emerald-500 h-full text-[9px] font-bold text-slate-950 flex items-center justify-center" style="width: 95%">LRM (0.6s)</div>
+              <div class="bg-amber-500 h-full text-[9px] font-bold text-slate-950 flex items-center justify-center" style="width: 30%">pixelNeRF (3m)</div>
+              <div class="bg-rose-500 h-full text-[9px] font-bold text-slate-950 flex items-center justify-center" style="width: 10%">NeRF</div>
+            </div>
+          </div>
+
+          <!-- Flexibilité d'Entrée -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-slate-300">
+              <span class="font-semibold">Facilité d'Utilisation / Entrées Requises</span>
+              <span class="text-slate-400">LRM (1 photo brute) vs pixelNeRF (1 photo) vs NeRF (100 photos + COLMAP)</span>
+            </div>
+            <div class="h-3 w-full bg-slate-950 rounded-full overflow-hidden flex">
+              <div class="bg-cyan-500 h-full text-[9px] font-bold text-slate-950 flex items-center justify-center" style="width: 95%">LRM (1 vue non calibrée)</div>
+              <div class="bg-indigo-500 h-full text-[9px] font-bold text-slate-950 flex items-center justify-center" style="width: 75%">pixelNeRF (1 vue)</div>
+              <div class="bg-slate-700 h-full text-[9px] font-bold text-slate-300 flex items-center justify-center" style="width: 25%">NeRF (100 vues)</div>
+            </div>
+          </div>
+
+          <!-- Précision Géométrique -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-slate-300">
+              <span class="font-semibold">Fidélité des Détails Fins & Réflexions Spéculaires</span>
+              <span class="text-slate-400">NeRF (Excellente sur scène) &gt; LRM (Très bonne) &gt; pixelNeRF (Moyenne/floue)</span>
+            </div>
+            <div class="h-3 w-full bg-slate-950 rounded-full overflow-hidden flex">
+              <div class="bg-sky-500 h-full text-[9px] font-bold text-slate-950 flex items-center justify-center" style="width: 92%">NeRF (PSNR 17.76 dB)</div>
+              <div class="bg-cyan-500 h-full text-[9px] font-bold text-slate-950 flex items-center justify-center" style="width: 80%">LRM TripoSR</div>
+              <div class="bg-indigo-500 h-full text-[9px] font-bold text-slate-950 flex items-center justify-center" style="width: 50%">pixelNeRF</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 Metrics Cards (PSNR / SSIM / LPIPS) -->
+      <div class="space-y-3">
+        <h3 class="text-base font-bold text-white flex items-center space-x-2">
+          <i data-lucide="calculator" class="w-5 h-5 text-emerald-400"></i>
+          <span>Explication Détaillée des 3 Métriques Fondamentales</span>
+        </h3>
         
-        <!-- PSNR -->
-        <div class="p-6 rounded-2xl border border-slate-800 bg-slate-900/60 space-y-4">
-          <div class="flex items-center justify-between">
-            <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-sky-500/10 text-sky-400 border border-sky-500/20 font-mono">PSNR (dB)</span>
-            <span class="text-xs text-emerald-400 font-semibold">Plus haut = Mieux</span>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          <!-- PSNR -->
+          <div class="p-6 rounded-2xl border border-slate-800 bg-slate-900/60 space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-sky-500/10 text-sky-400 border border-sky-500/20 font-mono">PSNR (dB)</span>
+              <span class="text-xs text-emerald-400 font-semibold">Plus haut = Mieux</span>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-white">Peak Signal-to-Noise Ratio</h3>
+              <p class="text-xs text-slate-400 mt-1">Fidélité pixel par pixel brute (Signal/Bruit)</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80">
+              <div class="text-2xl font-extrabold text-sky-400 font-mono">17.76 dB</div>
+              <div class="text-xs text-slate-500 mt-1">Score NeRF Lego (± 3.14 dB)</div>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Mesure l'erreur quadratique moyenne (MSE) sur les intensités RGB. Indique la conformité globale des couleurs mais peut tolérer un léger flou uniforme.
+            </p>
           </div>
-          <div>
-            <h3 class="text-lg font-bold text-white">Peak Signal-to-Noise Ratio</h3>
-            <p class="text-xs text-slate-400 mt-1">Fidélité pixel par pixel brute (Signal/Bruit)</p>
-          </div>
-          <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80">
-            <div class="text-2xl font-extrabold text-sky-400 font-mono">17.76 dB</div>
-            <div class="text-xs text-slate-500 mt-1">Score NeRF Lego (± 3.14 dB)</div>
-          </div>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            Mesure l'erreur quadratique moyenne (MSE) sur les intensités RGB. Indique la conformité globale des couleurs mais peut tolérer un léger flou uniforme.
-          </p>
-        </div>
 
-        <!-- SSIM -->
-        <div class="p-6 rounded-2xl border border-slate-800 bg-slate-900/60 space-y-4">
-          <div class="flex items-center justify-between">
-            <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono">SSIM (0 - 1)</span>
-            <span class="text-xs text-emerald-400 font-semibold">Proche de 1 = Mieux</span>
+          <!-- SSIM -->
+          <div class="p-6 rounded-2xl border border-slate-800 bg-slate-900/60 space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono">SSIM (0 - 1)</span>
+              <span class="text-xs text-emerald-400 font-semibold">Proche de 1 = Mieux</span>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-white">Structural Similarity</h3>
+              <p class="text-xs text-slate-400 mt-1">Cohérence des formes, arêtes et contrastes</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80">
+              <div class="text-2xl font-extrabold text-indigo-400 font-mono">0.7695</div>
+              <div class="text-xs text-slate-500 mt-1">Score NeRF Lego (± 0.049)</div>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Compare la luminance, le contraste et les structures locales. Plus sensible à la netteté des contours géométriques qu'un simple calcul pixel à pixel.
+            </p>
           </div>
-          <div>
-            <h3 class="text-lg font-bold text-white">Structural Similarity</h3>
-            <p class="text-xs text-slate-400 mt-1">Cohérence des formes, arêtes et contrastes</p>
-          </div>
-          <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80">
-            <div class="text-2xl font-extrabold text-indigo-400 font-mono">0.7695</div>
-            <div class="text-xs text-slate-500 mt-1">Score NeRF Lego (± 0.049)</div>
-          </div>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            Compare la luminance, le contraste et les structures locales. Plus sensible à la netteté des contours géométriques qu'un simple calcul pixel à pixel.
-          </p>
-        </div>
 
-        <!-- LPIPS -->
-        <div class="p-6 rounded-2xl border border-slate-800 bg-slate-900/60 space-y-4">
-          <div class="flex items-center justify-between">
-            <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-mono">LPIPS (≥ 0)</span>
-            <span class="text-xs text-emerald-400 font-semibold">Plus bas = Mieux</span>
+          <!-- LPIPS -->
+          <div class="p-6 rounded-2xl border border-slate-800 bg-slate-900/60 space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-mono">LPIPS (≥ 0)</span>
+              <span class="text-xs text-emerald-400 font-semibold">Plus bas = Mieux</span>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-white">Perceptual Similarity</h3>
+              <p class="text-xs text-slate-400 mt-1">Distance perceptive neuronale profonde</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80">
+              <div class="text-2xl font-extrabold text-cyan-400 font-mono">0.1298</div>
+              <div class="text-xs text-slate-500 mt-1">Score NeRF Lego (Distance basse = Réaliste)</div>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Passe l'image générée et la cible dans un réseau AlexNet pré-entraîné. C'est la métrique la plus fidèle à ce que l'œil humain juge photoréaliste.
+            </p>
           </div>
-          <div>
-            <h3 class="text-lg font-bold text-white">Perceptual Similarity</h3>
-            <p class="text-xs text-slate-400 mt-1">Distance perceptive neuronale profonde</p>
-          </div>
-          <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80">
-            <div class="text-2xl font-extrabold text-cyan-400 font-mono">0.1298</div>
-            <div class="text-xs text-slate-500 mt-1">Score NeRF Lego (Distance basse = Réaliste)</div>
-          </div>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            Passe l'image générée et la cible dans un réseau AlexNet pré-entraîné. C'est la métrique la plus fidèle à ce que l'œil humain juge photoréaliste.
-          </p>
-        </div>
 
+        </div>
       </div>
 
       <!-- JSON Raw Viewer -->
