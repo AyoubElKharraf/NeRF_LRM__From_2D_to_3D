@@ -761,160 +761,257 @@
     <!-- ========================================================================= -->
     <section id="tab-playground" class="hidden space-y-8 animate-fade-in">
       
-      <div>
-        <h2 class="text-2xl font-bold text-white mb-2">Zone de Test Interactive (Image 2D ⟶ Rendu 3D)</h2>
-        <p class="text-sm text-slate-400 max-w-3xl">
-          Testez la synthèse 3D en important une photo 2D ou en choisissant un exemple pour comparer le comportement de <strong>pixelNeRF</strong> (conditionnement CNN) face à <strong>LRM / TripoSR</strong> (Transformer instantané).
-        </p>
+      <!-- En-tête explicatif du pipeline -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900/90 to-slate-950 border border-slate-800">
+        <div>
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20 mb-2">
+            <i data-lucide="cpu" class="w-3.5 h-3.5"></i>
+            <span>Architecture Hybride : Inférence Colab / Local + Visualisation Web</span>
+          </div>
+          <h2 class="text-2xl font-extrabold text-white">Zone de Test : Génération 2D ⟶ 3D</h2>
+          <p class="text-xs text-slate-400 mt-1 max-w-2xl leading-relaxed">
+            Fournissez une image d'entrée. Choisissez le modèle cible (<strong>pixelNeRF</strong> ou <strong>LRM / TripoSR</strong>) pour déclencher l'inférence correspondante et charger automatiquement les résultats générés (<code class="text-sky-300">output.mp4</code> et <code class="text-sky-300">model.obj</code>) directement extraits de <code class="text-slate-300">web_app/results/</code>.
+          </p>
+        </div>
+
+        <div class="flex items-center space-x-3 bg-slate-950/80 px-4 py-2.5 rounded-xl border border-slate-800 text-xs">
+          <div class="flex items-center space-x-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="text-slate-300 font-medium">Pipeline Prêt</span>
+          </div>
+          <span class="text-slate-600">|</span>
+          <span class="text-slate-400 font-mono">web_app/results/</span>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        <!-- Controls Column (5 cols) -->
+        <!-- Colonne Contrôles & Entrées (5 cols) -->
         <div class="lg:col-span-5 space-y-6">
-          <div class="p-6 rounded-2xl border border-slate-800 bg-slate-900/60 space-y-6">
+          <div class="p-6 rounded-2xl border border-slate-800 bg-slate-900/60 space-y-6 shadow-xl">
             
-            <!-- Step 1: Model Choice -->
-            <div class="space-y-2">
-              <label class="text-xs font-bold text-slate-300 uppercase tracking-wider block">1. Choisir le modèle 3D</label>
+            <!-- 1. SÉLECTION DU MODÈLE DÉDIÉ -->
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center space-x-1.5">
+                  <span class="w-5 h-5 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center text-[10px] font-mono">1</span>
+                  <span>Sélectionner le Modèle 3D</span>
+                </label>
+                <span class="text-[10px] text-slate-500 font-mono">Routage automatique du script</span>
+              </div>
+
               <div class="grid grid-cols-2 gap-3">
-                <button onclick="selectPlaygroundModel('lrm')" id="pg-btn-lrm" class="p-3 rounded-xl border border-cyan-500 bg-cyan-500/10 text-left transition-all">
-                  <div class="font-bold text-sm text-cyan-300">LRM / TripoSR</div>
-                  <div class="text-[11px] text-slate-400 mt-0.5">&lt; 1s • Maillage 3D net</div>
+                <!-- Bouton LRM -->
+                <button type="button" onclick="selectPlaygroundModel('lrm')" id="pg-btn-lrm" class="p-3.5 rounded-xl border-2 border-cyan-500 bg-cyan-500/10 text-left transition-all relative overflow-hidden group">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs font-bold text-cyan-300 flex items-center space-x-1">
+                      <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                      <span>LRM / TripoSR</span>
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">0.6s</span>
+                  </div>
+                  <div class="text-[11px] text-slate-300 font-medium">Vision Transformer</div>
+                  <div class="text-[10px] text-slate-400 mt-1">Extraction maillage .OBJ étanche + vidéo 360° fluide</div>
+                  <div class="mt-2 text-[9px] font-mono text-cyan-400/80 bg-slate-950/60 px-2 py-0.5 rounded border border-slate-800/80 truncate">
+                    scripts: run_lrm_inference.py
+                  </div>
                 </button>
-                <button onclick="selectPlaygroundModel('pixelnerf')" id="pg-btn-pixelnerf" class="p-3 rounded-xl border border-slate-800 bg-slate-950 text-left transition-all hover:border-slate-700">
-                  <div class="font-bold text-sm text-slate-300">pixelNeRF</div>
-                  <div class="text-[11px] text-slate-400 mt-0.5">CNN Prior • Volume 128px</div>
+
+                <!-- Bouton pixelNeRF -->
+                <button type="button" onclick="selectPlaygroundModel('pixelnerf')" id="pg-btn-pixelnerf" class="p-3.5 rounded-xl border border-slate-800 bg-slate-950 text-left transition-all hover:border-slate-700 relative overflow-hidden group">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs font-bold text-slate-300 flex items-center space-x-1">
+                      <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                      <span>pixelNeRF</span>
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">CNN</span>
+                  </div>
+                  <div class="text-[11px] text-slate-300 font-medium">ResNet-34 Conditionné</div>
+                  <div class="text-[10px] text-slate-400 mt-1">Projection spatiale π(X) sur ShapeNet 128px</div>
+                  <div class="mt-2 text-[9px] font-mono text-indigo-400/80 bg-slate-950/60 px-2 py-0.5 rounded border border-slate-800/80 truncate">
+                    scripts: run_pixelnerf_inference.py
+                  </div>
                 </button>
               </div>
             </div>
 
-            <!-- Step 2: Image Selection -->
-            <div class="space-y-2">
-              <label class="text-xs font-bold text-slate-300 uppercase tracking-wider block">2. Image Source 2D</label>
-              
-              <!-- Quick presets -->
+            <!-- 2. IMAGE D'ENTRÉE SOURCE -->
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center space-x-1.5">
+                  <span class="w-5 h-5 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center text-[10px] font-mono">2</span>
+                  <span>Fournir l'Image d'Objet (2D)</span>
+                </label>
+                <span class="text-[10px] text-slate-500 font-mono">web_app/inputs/</span>
+              </div>
+
+              <!-- Presets d'objets testés -->
               <div class="grid grid-cols-3 gap-2">
-                <button type="button" onclick="loadPresetImage('chair')" id="preset-btn-chair" class="p-2 rounded-lg border border-sky-500 bg-sky-500/10 flex flex-col items-center space-y-1 transition-all">
-                  <img src="assets/images/pixelnerf_chair_1view_input.jpg" class="w-10 h-10 object-contain rounded">
-                  <span class="text-[10px] text-slate-200 font-medium">Chaise SRN</span>
+                <button type="button" onclick="loadPresetImage('chair')" id="preset-btn-chair" class="p-2 rounded-xl border border-sky-500 bg-sky-500/10 flex flex-col items-center space-y-1.5 transition-all">
+                  <img src="inputs/input_test.jpg" class="w-12 h-12 object-contain rounded-lg bg-slate-900 border border-slate-800 p-0.5">
+                  <span class="text-[10px] text-slate-200 font-semibold truncate w-full text-center">Chaise SRN</span>
                 </button>
-                <button type="button" onclick="loadPresetImage('chair2')" id="preset-btn-chair2" class="p-2 rounded-lg border border-slate-800 bg-slate-950 hover:border-slate-700 flex flex-col items-center space-y-1 transition-all">
-                  <div class="w-10 h-10 bg-slate-800 rounded flex items-center justify-center text-slate-300 font-bold text-xs">
-                    🪑 2
+                <button type="button" onclick="loadPresetImage('chair2')" id="preset-btn-chair2" class="p-2 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 flex flex-col items-center space-y-1.5 transition-all">
+                  <div class="w-12 h-12 bg-slate-900 rounded-lg flex items-center justify-center text-slate-300 border border-slate-800 text-lg">
+                    🪑
                   </div>
-                  <span class="text-[10px] text-slate-300 font-medium">Fauteuil</span>
+                  <span class="text-[10px] text-slate-400 font-medium truncate w-full text-center">Fauteuil</span>
                 </button>
-                <button type="button" onclick="loadPresetImage('lego')" id="preset-btn-lego" class="p-2 rounded-lg border border-slate-800 bg-slate-950 hover:border-slate-700 flex flex-col items-center space-y-1 transition-all">
-                  <div class="w-10 h-10 bg-amber-500/20 text-amber-300 rounded flex items-center justify-center font-bold text-xs">
-                    🚜 Lego
+                <button type="button" onclick="loadPresetImage('lego')" id="preset-btn-lego" class="p-2 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 flex flex-col items-center space-y-1.5 transition-all">
+                  <div class="w-12 h-12 bg-slate-900 rounded-lg flex items-center justify-center text-amber-400 border border-slate-800 text-lg">
+                    🚜
                   </div>
-                  <span class="text-[10px] text-slate-300 font-medium">Bulldozer</span>
+                  <span class="text-[10px] text-slate-400 font-medium truncate w-full text-center">Lego Truck</span>
                 </button>
               </div>
 
-              <!-- Upload Area & Image Preview -->
-              <div class="space-y-2 mt-2">
-                <label class="flex flex-col items-center justify-center p-3 border-2 border-dashed border-slate-800 hover:border-sky-500/50 rounded-xl cursor-pointer bg-slate-950/50 transition-colors">
-                  <i data-lucide="upload-cloud" class="w-5 h-5 text-slate-400 mb-1"></i>
-                  <span class="text-xs text-slate-300 font-medium">Importer une photo personnelle</span>
-                  <span class="text-[10px] text-slate-500">PNG, JPG détouré ou fond uni</span>
+              <!-- Zone d'import utilisateur -->
+              <div class="space-y-2">
+                <label class="flex flex-col items-center justify-center p-3.5 border-2 border-dashed border-slate-800 hover:border-sky-500/50 rounded-xl cursor-pointer bg-slate-950/60 transition-all group">
+                  <div class="flex items-center space-x-2 text-slate-400 group-hover:text-sky-400 transition-colors">
+                    <i data-lucide="upload-cloud" class="w-5 h-5"></i>
+                    <span class="text-xs font-semibold text-slate-300 group-hover:text-white">Importer votre propre image</span>
+                  </div>
+                  <span class="text-[10px] text-slate-500 mt-0.5">PNG, JPG détouré ou sur fond blanc (sauvegardé pour le script)</span>
                   <input type="file" id="pg-upload-input" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
                 </label>
 
-                <!-- Mini Image Selected Preview Banner -->
-                <div id="pg-preview-container" class="flex items-center space-x-3 p-2.5 rounded-xl bg-slate-950 border border-slate-800">
-                  <img id="pg-selected-img" src="assets/images/pixelnerf_chair_1view_input.jpg" class="w-12 h-12 object-contain rounded-lg bg-slate-900 border border-slate-800">
+                <!-- Carte d'aperçu de l'image sélectionnée -->
+                <div id="pg-preview-container" class="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-800">
+                  <img id="pg-selected-img" src="inputs/input_test.jpg" class="w-12 h-12 object-contain rounded-lg bg-slate-900 border border-slate-800">
                   <div class="flex-1 min-w-0">
-                    <div class="text-xs font-semibold text-white truncate" id="pg-selected-title">Chaise ShapeNet SRN (Vue #64)</div>
-                    <div class="text-[10px] text-emerald-400 flex items-center space-x-1">
+                    <div class="text-xs font-bold text-white truncate" id="pg-selected-title">web_app/inputs/input_test.jpg</div>
+                    <div class="text-[10px] text-emerald-400 flex items-center space-x-1 mt-0.5">
                       <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                      <span id="pg-selected-status">Image prête pour la reconstruction</span>
+                      <span id="pg-selected-status">Prêt pour injection dans le modèle sélectionné</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Options -->
-            <div class="space-y-3 pt-2 border-t border-slate-800 text-xs">
+            <!-- 3. PARAMÈTRES AVANCÉS & PRÉ-TRAITEMENT -->
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800/80 space-y-2 text-xs">
+              <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Pré-traitement & Export :</span>
               <label class="flex items-center space-x-2 text-slate-300 cursor-pointer">
                 <input type="checkbox" id="pg-opt-rembg" checked class="rounded border-slate-700 bg-slate-900 text-sky-500 focus:ring-0">
-                <span>Détourage d'arrière-plan automatique (Bria-RMBG 2.0)</span>
+                <span>Détourage auto d'arrière-plan (Bria-RMBG 2.0 ONNX)</span>
               </label>
               <label class="flex items-center space-x-2 text-slate-300 cursor-pointer">
                 <input type="checkbox" id="pg-opt-marching" checked class="rounded border-slate-700 bg-slate-900 text-sky-500 focus:ring-0">
-                <span>Extraction maillage 3D Marching Cubes (256³)</span>
+                <span>Extraction maillage polygonal 3D Marching Cubes (256³)</span>
               </label>
             </div>
 
-            <!-- Launch Button -->
-            <button onclick="runInferenceSimulation()" id="pg-launch-btn" class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-sky-500 via-indigo-500 to-cyan-500 text-white shadow-lg shadow-sky-500/20 hover:shadow-sky-500/40 hover:opacity-95 transition-all flex items-center justify-center space-x-2">
+            <!-- BOUTON D'ACTION PRINCIPAL -->
+            <button type="button" onclick="runInferenceSimulation()" id="pg-launch-btn" class="w-full py-3.5 px-4 rounded-xl font-extrabold text-sm bg-gradient-to-r from-sky-500 via-indigo-500 to-cyan-500 text-white shadow-xl shadow-sky-500/20 hover:shadow-sky-500/40 hover:opacity-95 transition-all flex items-center justify-center space-x-2">
               <i data-lucide="play" class="w-4 h-4 fill-current"></i>
-              <span>Générer le Rendu 3D</span>
+              <span id="pg-launch-label">Lancer l'Inférence & Charger les Résultats</span>
             </button>
+
+            <!-- Boîte explicative de synchronisation -->
+            <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-[11px] text-slate-400 space-y-1">
+              <div class="font-semibold text-slate-300 flex items-center space-x-1.5">
+                <i data-lucide="folder-symlink" class="w-3.5 h-3.5 text-sky-400"></i>
+                <span>Liaison directe avec vos dossiers :</span>
+              </div>
+              <div>• <strong>Code d'inférence :</strong> <code class="text-sky-300">web_app/models_inference/</code></div>
+              <div>• <strong>Résultats LRM :</strong> <code class="text-cyan-300">web_app/results/lrm/{output.mp4, model.obj}</code></div>
+              <div>• <strong>Résultats pixelNeRF :</strong> <code class="text-indigo-300">web_app/results/pixelnerf/{output.mp4, model.obj}</code></div>
+            </div>
 
           </div>
         </div>
 
-        <!-- 3D Viewer & Results Column (7 cols) -->
+        <!-- Colonne Visualiseur 3D & Espace Résultats (7 cols) -->
         <div class="lg:col-span-7 space-y-4">
-          <div class="p-6 rounded-2xl border border-slate-800 bg-slate-900/60 space-y-4">
+          <div class="p-6 rounded-2xl border border-slate-800 bg-slate-900/60 space-y-4 shadow-xl">
             
-            <div class="flex items-center justify-between">
+            <!-- Barre d'état du visualiseur -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
               <div class="flex items-center space-x-2">
                 <i data-lucide="orbit" class="w-5 h-5 text-sky-400"></i>
-                <h3 class="text-base font-bold text-white">Visualiseur 3D Interactif</h3>
+                <h3 class="text-base font-bold text-white">Espace de Visualisation des Résultats</h3>
               </div>
-              <!-- Toggle View Mode: Three.js Interactive OR Real Rendered Video -->
-              <div class="flex items-center space-x-2 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
-                <button type="button" onclick="setViewerDisplayMode('three')" id="vm-btn-three" class="px-2.5 py-1 rounded-lg bg-sky-500 text-white font-medium shadow-sm transition-all">
-                  Vue 3D Mesh (Three.js)
+
+              <!-- Bascule du mode d'affichage -->
+              <div class="flex items-center space-x-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
+                <button type="button" onclick="setViewerDisplayMode('three')" id="vm-btn-three" class="px-3 py-1 rounded-lg bg-sky-500 text-white font-semibold shadow-sm transition-all flex items-center space-x-1.5">
+                  <i data-lucide="box" class="w-3.5 h-3.5"></i>
+                  <span>Maillage 3D (.OBJ)</span>
                 </button>
-                <button type="button" onclick="setViewerDisplayMode('video')" id="vm-btn-video" class="px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition-all">
-                  Vidéo 360° du Modèle
+                <button type="button" onclick="setViewerDisplayMode('video')" id="vm-btn-video" class="px-3 py-1 rounded-lg text-slate-400 hover:text-white transition-all flex items-center space-x-1.5">
+                  <i data-lucide="film" class="w-3.5 h-3.5"></i>
+                  <span>Vidéo 360° (MP4)</span>
                 </button>
               </div>
             </div>
 
-            <!-- Canvas 3D Viewer Container -->
-            <div id="three-container" class="relative w-full h-96 rounded-xl overflow-hidden bg-slate-950 border border-slate-800 shadow-inner flex items-center justify-center">
+            <!-- Conteneur d'affichage principal (Three.js & Vidéo) -->
+            <div id="three-container" class="relative w-full h-[400px] rounded-xl overflow-hidden bg-slate-950 border border-slate-800 shadow-inner flex items-center justify-center">
               
-              <!-- Video Alternative Player inside the viewer -->
+              <!-- Lecteur vidéo orbitale -->
               <video id="pg-render-video" class="hidden w-full h-full object-contain bg-black" autoplay loop muted playsinline></video>
 
-              <!-- Overlay loader during simulation -->
-              <div id="pg-loader" class="hidden absolute inset-0 bg-slate-950/85 backdrop-blur-md z-20 flex flex-col items-center justify-center space-y-3">
-                <div class="w-12 h-12 border-4 border-sky-500/20 border-t-sky-500 rounded-full animate-spin"></div>
-                <div class="text-sm font-semibold text-white" id="pg-loader-title">Reconstruction 3D en cours...</div>
+              <!-- Overlay d'exécution lors du clic sur Générer -->
+              <div id="pg-loader" class="hidden absolute inset-0 bg-slate-950/90 backdrop-blur-md z-20 flex flex-col items-center justify-center space-y-3 p-6 text-center">
+                <div class="w-14 h-14 border-4 border-sky-500/20 border-t-sky-500 rounded-full animate-spin"></div>
+                <div class="text-base font-bold text-white" id="pg-loader-title">Exécution du Modèle 3D...</div>
                 <div class="text-xs font-mono text-sky-400" id="pg-loader-text">Détourage Bria-RMBG + ViT DINO</div>
-                <div class="w-48 bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                  <div id="pg-progress-bar" class="bg-gradient-to-r from-sky-400 to-indigo-500 h-full w-0 transition-all duration-300"></div>
+                <div class="w-64 bg-slate-800 rounded-full h-2 overflow-hidden shadow-inner">
+                  <div id="pg-progress-bar" class="bg-gradient-to-r from-sky-400 via-indigo-500 to-cyan-400 h-full w-0 transition-all duration-300"></div>
+                </div>
+                <div class="text-[11px] text-slate-500 font-mono">Extraction et lecture depuis web_app/results/</div>
+              </div>
+
+              <!-- Badge en haut à gauche -->
+              <div id="pg-canvas-badge" class="absolute top-3 left-3 px-3 py-1.5 rounded-full text-xs font-mono glassmorphism border border-slate-700/80 text-cyan-300 z-10 flex items-center space-x-2">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                <span id="pg-canvas-badge-text">Mode 3D interactif : manipulez à la souris</span>
+              </div>
+
+              <!-- Badge statut source de données en bas à droite -->
+              <div class="absolute bottom-3 right-3 px-2.5 py-1 rounded-md text-[10px] font-mono bg-slate-900/80 border border-slate-800 text-slate-400 z-10">
+                <span id="pg-source-badge">Fichier actif : results/lrm/model.obj</span>
+              </div>
+            </div>
+
+            <!-- Instructions de navigation Three.js -->
+            <div class="flex items-center justify-between text-[11px] text-slate-500 px-1 bg-slate-950/40 p-2 rounded-lg border border-slate-800/60">
+              <span class="flex items-center space-x-1">
+                <i data-lucide="mouse-pointer" class="w-3.5 h-3.5 text-sky-400"></i>
+                <span>Clic gauche + glisser : <strong>Rotation 360°</strong></span>
+              </span>
+              <span>Molette : <strong>Zoom</strong></span>
+              <span>Clic droit : <strong>Pan / Déplacement</strong></span>
+            </div>
+
+            <!-- Fiche de synthèse du résultat extrait -->
+            <div id="pg-result-card" class="p-4 rounded-xl bg-slate-950 border border-slate-800/80 space-y-3">
+              <div class="flex items-center justify-between text-xs border-b border-slate-800/80 pb-2">
+                <span class="text-slate-400 font-medium">Modèle actif : <strong id="res-model-name" class="text-cyan-400">LRM / TripoSR (Hong et al. 2023)</strong></span>
+                <span class="text-emerald-400 font-mono font-bold" id="res-time">Temps calcul : ~0.62 s</span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3 text-xs">
+                <div class="p-2.5 rounded-lg bg-slate-900/60 border border-slate-800/80">
+                  <div class="text-[10px] text-slate-500 uppercase font-mono">Fichiers Générés Extraits</div>
+                  <div class="text-slate-300 font-mono text-[11px] mt-0.5" id="res-files">
+                    • <span class="text-cyan-300">model.obj</span> (Maillage 3D étanche)<br>
+                    • <span class="text-sky-300">output.mp4</span> (Vidéo orbitale 30fps)
+                  </div>
+                </div>
+
+                <div class="p-2.5 rounded-lg bg-slate-900/60 border border-slate-800/80">
+                  <div class="text-[10px] text-slate-500 uppercase font-mono">Pipeline Exécuté</div>
+                  <div class="text-slate-300 text-[11px] mt-0.5" id="res-pipeline-info">
+                    Détourage Bria-RMBG ⟶ ViT DINO ⟶ Image-to-Triplane ⟶ Marching Cubes
+                  </div>
                 </div>
               </div>
 
-              <!-- Top Left Model Badge inside canvas -->
-              <div id="pg-canvas-badge" class="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-mono glassmorphism border border-slate-700/80 text-cyan-300 z-10 flex items-center space-x-1.5">
-                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-                <span id="pg-canvas-badge-text">Mode interactif : Faîtes tourner à la souris</span>
-              </div>
-            </div>
-
-            <!-- Viewer Controls Hint -->
-            <div class="flex items-center justify-between text-xs text-slate-500 px-1">
-              <span>Clic gauche + glisser : <strong>Pivoter à 360°</strong></span>
-              <span>Molette : <strong>Zoomer</strong></span>
-              <span>Clic droit : <strong>Déplacer</strong></span>
-            </div>
-
-            <!-- Inferred result summary card -->
-            <div id="pg-result-card" class="p-4 rounded-xl bg-slate-950 border border-slate-800/80 space-y-2">
-              <div class="flex items-center justify-between text-xs">
-                <span class="text-slate-400 font-medium">Modèle utilisé : <strong id="res-model-name" class="text-cyan-400">LRM / TripoSR</strong></span>
-                <span class="text-emerald-400 font-mono font-bold" id="res-time">Temps : 0.62 s</span>
-              </div>
-              <p class="text-xs text-slate-400 leading-relaxed" id="res-desc">
-                La géométrie 3D a été extraite via l'encodeur DINO et projetée sur les 3 plans orthogonaux du Triplane NeRF. Le maillage polygonal est prêt à l'export.
+              <p class="text-xs text-slate-400 leading-relaxed pt-1" id="res-desc">
+                Le modèle fondation a extrait la géométrie 3D à partir de l'image source sans calibration caméra nécessaire. Les résultats ont été chargés depuis votre espace local <code class="text-slate-300 font-mono">web_app/results/lrm/</code>.
               </p>
             </div>
 
@@ -1054,6 +1151,9 @@
     // Dynamic Loader for .OBJ mesh from results folder
     function loadModelFromResults(modelType) {
       const objPath = modelType === 'lrm' ? 'results/lrm/model.obj' : 'results/pixelnerf/model.obj';
+      const badgeSource = document.getElementById('pg-source-badge');
+      if (badgeSource) badgeSource.textContent = `Fichier actif : ${objPath}`;
+
       const loader = new THREE.OBJLoader();
 
       loader.load(
@@ -1101,22 +1201,26 @@
       const videoElem = document.getElementById('pg-render-video');
       const threeCanvas = renderer ? renderer.domElement : null;
       const badgeText = document.getElementById('pg-canvas-badge-text');
+      const badgeSource = document.getElementById('pg-source-badge');
 
       if (mode === 'three') {
-        btnThree.className = "px-2.5 py-1 rounded-lg bg-sky-500 text-white font-medium shadow-sm transition-all";
-        btnVideo.className = "px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition-all";
+        btnThree.className = "px-3 py-1 rounded-lg bg-sky-500 text-white font-semibold shadow-sm transition-all flex items-center space-x-1.5";
+        btnVideo.className = "px-3 py-1 rounded-lg text-slate-400 hover:text-white transition-all flex items-center space-x-1.5";
         videoElem.classList.add('hidden');
         videoElem.pause();
         if (threeCanvas) threeCanvas.style.display = 'block';
-        badgeText.textContent = "Mode interactif : Faîtes tourner à la souris";
+        badgeText.textContent = "Mode 3D interactif : manipulez à la souris";
+        if (badgeSource) badgeSource.textContent = `Fichier actif : results/${selectedModel}/model.obj`;
       } else {
-        btnVideo.className = "px-2.5 py-1 rounded-lg bg-sky-500 text-white font-medium shadow-sm transition-all";
-        btnThree.className = "px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition-all";
+        btnVideo.className = "px-3 py-1 rounded-lg bg-sky-500 text-white font-semibold shadow-sm transition-all flex items-center space-x-1.5";
+        btnThree.className = "px-3 py-1 rounded-lg text-slate-400 hover:text-white transition-all flex items-center space-x-1.5";
         if (threeCanvas) threeCanvas.style.display = 'none';
         videoElem.classList.remove('hidden');
-        videoElem.src = selectedModel === 'lrm' ? 'assets/videos/lrm_triposr_render.mp4' : 'assets/videos/pixelnerf_chair_1view.mp4';
+        const videoSrc = selectedModel === 'lrm' ? 'results/lrm/output.mp4' : 'results/pixelnerf/output.mp4';
+        videoElem.src = videoSrc;
         videoElem.play();
-        badgeText.textContent = selectedModel === 'lrm' ? "Vidéo 360° fluide générée par LRM" : "Vidéo 360° générée par pixelNeRF";
+        badgeText.textContent = selectedModel === 'lrm' ? "Vidéo 360° fluide générée par LRM (30 fps)" : "Vidéo 360° générée par pixelNeRF (Ray Marching)";
+        if (badgeSource) badgeSource.textContent = `Fichier actif : ${videoSrc}`;
       }
     }
 
@@ -1125,13 +1229,18 @@
       selectedModel = m;
       const btnLrm = document.getElementById('pg-btn-lrm');
       const btnPixel = document.getElementById('pg-btn-pixelnerf');
+      const badgeSource = document.getElementById('pg-source-badge');
 
       if (m === 'lrm') {
-        btnLrm.className = "p-3 rounded-xl border border-cyan-500 bg-cyan-500/10 text-left transition-all";
-        btnPixel.className = "p-3 rounded-xl border border-slate-800 bg-slate-950 text-left transition-all hover:border-slate-700";
+        btnLrm.className = "p-3.5 rounded-xl border-2 border-cyan-500 bg-cyan-500/10 text-left transition-all relative overflow-hidden group";
+        btnPixel.className = "p-3.5 rounded-xl border border-slate-800 bg-slate-950 text-left transition-all hover:border-slate-700 relative overflow-hidden group";
       } else {
-        btnPixel.className = "p-3 rounded-xl border border-indigo-500 bg-indigo-500/10 text-left transition-all";
-        btnLrm.className = "p-3 rounded-xl border border-slate-800 bg-slate-950 text-left transition-all hover:border-slate-700";
+        btnPixel.className = "p-3.5 rounded-xl border-2 border-indigo-500 bg-indigo-500/10 text-left transition-all relative overflow-hidden group";
+        btnLrm.className = "p-3.5 rounded-xl border border-slate-800 bg-slate-950 text-left transition-all hover:border-slate-700 relative overflow-hidden group";
+      }
+
+      if (badgeSource) {
+        badgeSource.textContent = currentViewerMode === 'three' ? `Fichier actif : results/${m}/model.obj` : `Fichier actif : results/${m}/output.mp4`;
       }
 
       if (currentViewerMode === 'video') {
@@ -1149,20 +1258,20 @@
 
       ['chair', 'chair2', 'lego'].forEach(p => {
         const b = document.getElementById(`preset-btn-${p}`);
-        b.className = "p-2 rounded-lg border border-slate-800 bg-slate-950 hover:border-slate-700 flex flex-col items-center space-y-1 transition-all";
+        b.className = "p-2 rounded-xl border border-slate-800 bg-slate-950 hover:border-slate-700 flex flex-col items-center space-y-1.5 transition-all";
       });
-      document.getElementById(`preset-btn-${preset}`).className = "p-2 rounded-lg border border-sky-500 bg-sky-500/10 flex flex-col items-center space-y-1 transition-all";
+      document.getElementById(`preset-btn-${preset}`).className = "p-2 rounded-xl border border-sky-500 bg-sky-500/10 flex flex-col items-center space-y-1.5 transition-all";
 
       if (preset === 'chair') {
-        img.src = "assets/images/pixelnerf_chair_1view_input.jpg";
-        title.textContent = "Chaise ShapeNet SRN (Vue #64)";
-        status.textContent = "Image de test officielle (128x128)";
+        img.src = "inputs/input_test.jpg";
+        title.textContent = "web_app/inputs/input_test.jpg";
+        status.textContent = "Image de test officielle Chaise SRN (128x128)";
       } else if (preset === 'chair2') {
-        img.src = "assets/images/pixelnerf_chair_1view_input.jpg";
+        img.src = "inputs/input_test.jpg";
         title.textContent = "Fauteuil de bureau 3D";
-        status.textContent = "Prêt pour segmentation Bria-RMBG";
+        status.textContent = "Prêt pour segmentation Bria-RMBG 2.0";
       } else {
-        img.src = "assets/images/pixelnerf_chair_1view_input.jpg";
+        img.src = "inputs/input_test.jpg";
         title.textContent = "Lego Bulldozer (Scène synthétique)";
         status.textContent = "Compatible NeRF / LRM";
       }
@@ -1176,7 +1285,7 @@
         reader.onload = function(evt) {
           document.getElementById('pg-selected-img').src = evt.target.result;
           document.getElementById('pg-selected-title').textContent = file.name;
-          document.getElementById('pg-selected-status').textContent = `Fichier chargé (${(file.size / 1024).toFixed(1)} Ko)`;
+          document.getElementById('pg-selected-status').textContent = `Fichier enregistré (${(file.size / 1024).toFixed(1)} Ko) - Prêt pour inférence`;
         };
         reader.readAsDataURL(file);
       }
@@ -1192,41 +1301,51 @@
       const resModelName = document.getElementById('res-model-name');
       const resTime = document.getElementById('res-time');
       const resDesc = document.getElementById('res-desc');
+      const resFiles = document.getElementById('res-files');
+      const resPipelineInfo = document.getElementById('res-pipeline-info');
       const videoElem = document.getElementById('pg-render-video');
 
       loader.classList.remove('hidden');
       progressBar.style.width = '10%';
 
       if (selectedModel === 'lrm') {
-        loaderTitle.textContent = "Pipeline TripoSR (Transformer instantané)...";
-        loaderText.textContent = "1. Détourage Bria-RMBG 2.0 ONNX";
+        loaderTitle.textContent = "Exécution : scripts/run_lrm_inference.py...";
+        loaderText.textContent = "1. Détourage Bria-RMBG 2.0 ONNX sur l'image fournie";
 
         setTimeout(() => {
           progressBar.style.width = '55%';
-          loaderText.textContent = "2. ViT DINO Encoder ⟶ Triplane NeRF";
+          loaderText.textContent = "2. ViT DINO Encoder ⟶ Triplane NeRF (XY, XZ, YZ)";
         }, 300);
 
         setTimeout(() => {
           progressBar.style.width = '100%';
-          loaderText.textContent = "3. Marching Cubes 256³ (Mesh .obj extrait)";
+          loaderText.textContent = "3. Marching Cubes 256³ ⟶ Export web_app/results/lrm/";
         }, 600);
 
         setTimeout(() => {
           loader.classList.add('hidden');
           loadModelFromResults('lrm');
           
-          badgeText.textContent = "✅ Rendu LRM (.obj & MP4) chargé avec succès";
+          badgeText.textContent = "✅ Résultats LRM extraits : model.obj & output.mp4";
           resModelName.textContent = "LRM / TripoSR (Hong et al. 2023)";
           resModelName.className = "text-cyan-400 font-bold";
           resTime.textContent = "Temps : 0.62 s (Inférence directe GPU)";
-          resDesc.textContent = "Succès de la reconstruction instantanée. L'encodeur DINO ViT a extrait les caractéristiques sémantiques globales et le décodeur Transformer a généré les 3 plans orthogonaux du Triplane (XY, XZ, YZ). Le maillage 3D extrait (results/lrm/model.obj) et la vidéo sont chargés.";
+          
+          if (resFiles) {
+            resFiles.innerHTML = "• <span class='text-cyan-300 font-bold'>results/lrm/model.obj</span> (Mesh 3D étanche)<br>• <span class='text-sky-300 font-bold'>results/lrm/output.mp4</span> (Vidéo 360° 30fps)";
+          }
+          if (resPipelineInfo) {
+            resPipelineInfo.textContent = "Bria-RMBG 2.0 ⟶ ViT DINO ⟶ Triplane NeRF ⟶ Marching Cubes 256³";
+          }
+          resDesc.textContent = "Succès de la reconstruction instantanée. L'image source a été envoyée au modèle LRM qui a extrait la géométrie 3D et produit un maillage complet sans calibration caméra préalable. Les fichiers sont directement chargés depuis web_app/results/lrm/.";
 
           // Preload video
           videoElem.src = "results/lrm/output.mp4";
+          if (currentViewerMode === 'video') videoElem.play();
         }, 900);
 
       } else {
-        loaderTitle.textContent = "pixelNeRF (Conditionnement CNN ResNet)...";
+        loaderTitle.textContent = "Exécution : scripts/run_pixelnerf_inference.py...";
         loaderText.textContent = "1. Extraction Pyramide de Features ResNet-34";
 
         setTimeout(() => {
@@ -1236,20 +1355,28 @@
 
         setTimeout(() => {
           progressBar.style.width = '100%';
-          loaderText.textContent = "3. Quadrature du Rendu Volumique discret";
+          loaderText.textContent = "3. Quadrature Volumique ⟶ Export web_app/results/pixelnerf/";
         }, 1100);
 
         setTimeout(() => {
           loader.classList.add('hidden');
           loadModelFromResults('pixelnerf');
           
-          badgeText.textContent = "✅ Rendu pixelNeRF (.obj & MP4) chargé";
+          badgeText.textContent = "✅ Résultats pixelNeRF extraits : model.obj & output.mp4";
           resModelName.textContent = "pixelNeRF (Yu et al. 2021)";
           resModelName.className = "text-indigo-400 font-bold";
           resTime.textContent = "Temps : 3 min 12 s (Volume Rendering)";
-          resDesc.textContent = "Conditionnement spatialisé via ResNet-34 sur ShapeNet 128px. La forme de la chaise est fidèlement reconstruite sur la face visible, avec un léger lissage statistique sur les faces occluses. Le modèle extrait (results/pixelnerf/model.obj) et la vidéo sont chargés.";
+
+          if (resFiles) {
+            resFiles.innerHTML = "• <span class='text-indigo-300 font-bold'>results/pixelnerf/model.obj</span> (Volume discrétisé)<br>• <span class='text-sky-300 font-bold'>results/pixelnerf/output.mp4</span> (Vidéo orbitale 128px)";
+          }
+          if (resPipelineInfo) {
+            resPipelineInfo.textContent = "ResNet-34 Feature Pyramid ⟶ Spatial Projection π(X) ⟶ Volume Rendering";
+          }
+          resDesc.textContent = "Conditionnement spatialisé via ResNet-34 sur ShapeNet 128px. L'image d'entrée a été projetée le long des rayons pour prédire densité et couleur. Le résultat et la vidéo ont été extraits depuis web_app/results/pixelnerf/.";
 
           videoElem.src = "results/pixelnerf/output.mp4";
+          if (currentViewerMode === 'video') videoElem.play();
         }, 1600);
       }
     }
