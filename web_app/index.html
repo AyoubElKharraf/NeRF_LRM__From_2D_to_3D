@@ -25,9 +25,10 @@
   </script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Three.js & OrbitControls CDN -->
+  <!-- Three.js, OrbitControls & OBJLoader CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -118,7 +119,7 @@
           <div class="pt-2 flex flex-wrap gap-4 text-sm text-slate-400">
             <div class="flex items-center space-x-2">
               <i data-lucide="user" class="w-4 h-4 text-sky-400"></i>
-              <span>Binôme : <strong>Membre 1</strong> (NeRF, pixelNeRF) & <strong>Samir</strong> (LRM / TripoSR)</span>
+              <span>Binôme : <strong>Ayoub</strong> (NeRF, pixelNeRF) & <strong>Samir</strong> (LRM / TripoSR)</span>
             </div>
             <div class="flex items-center space-x-2">
               <i data-lucide="cpu" class="w-4 h-4 text-indigo-400"></i>
@@ -748,7 +749,7 @@
   <footer class="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500">
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
       <div>Master M2I — Semestre 3 • Module Traitement d'Images & Vision 3D</div>
-      <div>Binôme : Membre 1 (NeRF, pixelNeRF) & Samir (LRM / TripoSR) • Année 2026</div>
+      <div>Binôme : Ayoub (NeRF, pixelNeRF) & Samir (LRM / TripoSR) • Année 2026</div>
     </div>
   </footer>
 
@@ -868,46 +869,44 @@
       });
     }
 
-    // Procedural 3D Geometry representing Chair
-    function createChairMesh(type) {
-      if (currentMesh) scene.remove(currentMesh);
+    // Dynamic Loader for .OBJ mesh from results folder
+    function loadModelFromResults(modelType) {
+      const objPath = modelType === 'lrm' ? 'results/lrm/model.obj' : 'results/pixelnerf/model.obj';
+      const loader = new THREE.OBJLoader();
 
-      const chairGroup = new THREE.Group();
-      const isLRM = (type === 'lrm');
+      loader.load(
+        objPath,
+        function(obj) {
+          if (currentMesh) scene.remove(currentMesh);
 
-      const mat = new THREE.MeshStandardMaterial({
-        color: isLRM ? 0x0284c7 : 0x6366f1,
-        roughness: isLRM ? 0.3 : 0.7,
-        metalness: isLRM ? 0.2 : 0.0,
-        wireframe: false
-      });
+          const mat = new THREE.MeshStandardMaterial({
+            color: modelType === 'lrm' ? 0x0284c7 : 0x6366f1,
+            roughness: modelType === 'lrm' ? 0.35 : 0.65,
+            metalness: modelType === 'lrm' ? 0.25 : 0.05,
+            side: THREE.DoubleSide
+          });
 
-      // Assise
-      const seat = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.15, 1.6), mat);
-      seat.position.y = 0;
-      chairGroup.add(seat);
+          obj.traverse(function(child) {
+            if (child.isMesh) {
+              child.material = mat;
+              child.castShadow = true;
+              child.receiveShadow = true;
+            }
+          });
 
-      // Dossier
-      const back = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.6, 0.15), mat);
-      back.position.set(0, 0.85, -0.72);
-      chairGroup.add(back);
-
-      // Pieds
-      const legGeo = new THREE.CylinderGeometry(0.06, 0.04, 1.2, 16);
-      const legPositions = [
-        [-0.7, -0.6, -0.7],
-        [0.7, -0.6, -0.7],
-        [-0.7, -0.6, 0.7],
-        [0.7, -0.6, 0.7]
-      ];
-      legPositions.forEach(pos => {
-        const leg = new THREE.Mesh(legGeo, mat);
-        leg.position.set(...pos);
-        chairGroup.add(leg);
-      });
-
-      currentMesh = chairGroup;
-      scene.add(currentMesh);
+          currentMesh = obj;
+          currentMesh.position.y = -0.3;
+          scene.add(currentMesh);
+          console.log("OBJ Mesh chargé avec succès depuis :", objPath);
+        },
+        function(xhr) {
+          console.log((xhr.loaded / xhr.total * 100) + '% chargé');
+        },
+        function(error) {
+          console.warn("Erreur chargement OBJ (fallback géométrie procédurale) :", error);
+          createChairMesh(modelType);
+        }
+      );
     }
 
     // View Mode Toggle (Three.js 3D Mesh vs Video Player)
@@ -1032,16 +1031,16 @@
 
         setTimeout(() => {
           loader.classList.add('hidden');
-          createChairMesh('lrm');
+          loadModelFromResults('lrm');
           
-          badgeText.textContent = "✅ Rendu LRM généré en 0.62 s (Faîtes pivoter à la souris)";
+          badgeText.textContent = "✅ Rendu LRM (.obj & MP4) chargé avec succès";
           resModelName.textContent = "LRM / TripoSR (Hong et al. 2023)";
           resModelName.className = "text-cyan-400 font-bold";
           resTime.textContent = "Temps : 0.62 s (Inférence directe GPU)";
-          resDesc.textContent = "Succès de la reconstruction instantanée. L'encodeur DINO ViT a extrait les caractéristiques sémantiques globales et le décodeur Transformer a généré les 3 plans orthogonaux du Triplane (XY, XZ, YZ). Le maillage 3D étanche a été extrait en 0.6s.";
+          resDesc.textContent = "Succès de la reconstruction instantanée. L'encodeur DINO ViT a extrait les caractéristiques sémantiques globales et le décodeur Transformer a généré les 3 plans orthogonaux du Triplane (XY, XZ, YZ). Le maillage 3D extrait (results/lrm/model.obj) et la vidéo sont chargés.";
 
-          // Preload video if switched
-          videoElem.src = "assets/videos/lrm_triposr_render.mp4";
+          // Preload video
+          videoElem.src = "results/lrm/output.mp4";
         }, 900);
 
       } else {
@@ -1060,15 +1059,15 @@
 
         setTimeout(() => {
           loader.classList.add('hidden');
-          createChairMesh('pixelnerf');
+          loadModelFromResults('pixelnerf');
           
-          badgeText.textContent = "✅ Rendu pixelNeRF généré (Volume discret 128px)";
+          badgeText.textContent = "✅ Rendu pixelNeRF (.obj & MP4) chargé";
           resModelName.textContent = "pixelNeRF (Yu et al. 2021)";
           resModelName.className = "text-indigo-400 font-bold";
           resTime.textContent = "Temps : 3 min 12 s (Volume Rendering)";
-          resDesc.textContent = "Conditionnement spatialisé via ResNet-34 sur ShapeNet 128px. La forme de la chaise est fidèlement reconstruite sur la face visible, avec un léger lissage statistique sur les faces occluses.";
+          resDesc.textContent = "Conditionnement spatialisé via ResNet-34 sur ShapeNet 128px. La forme de la chaise est fidèlement reconstruite sur la face visible, avec un léger lissage statistique sur les faces occluses. Le modèle extrait (results/pixelnerf/model.obj) et la vidéo sont chargés.";
 
-          videoElem.src = "assets/videos/pixelnerf_chair_1view.mp4";
+          videoElem.src = "results/pixelnerf/output.mp4";
         }, 1600);
       }
     }

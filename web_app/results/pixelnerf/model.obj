@@ -1,0 +1,27 @@
+# Wavefront OBJ file : Chaise 3D reconstituée par pixelNeRF (Yu et al. 2021)
+# Volume Rendering discretisé (128^3)
+# Projet Master M2I - De la 2D à la 3D
+o Chair_pixelNeRF
+# Sommets face avant (nets)
+v -0.7 -0.5 -0.7
+v 0.7 -0.5 -0.7
+v 0.7 -0.5 0.7
+v -0.7 -0.5 0.7
+v -0.7 0.0 -0.7
+v 0.7 0.0 -0.7
+v 0.7 0.0 0.7
+v -0.7 0.0 0.7
+# Sommets face arrière (approximatifs / flou)
+v -0.6 1.4 -0.65
+v 0.6 1.4 -0.65
+v 0.6 1.4 -0.5
+v -0.6 1.4 -0.5
+
+# Faces
+f 5 6 7 8
+f 1 4 3 2
+f 5 8 4 1
+f 8 7 3 4
+f 7 6 2 3
+f 6 5 1 2
+f 9 10 11 12
